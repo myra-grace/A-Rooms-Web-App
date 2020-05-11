@@ -12,6 +12,8 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 status: 'checking database',
                 user: action.user,
+                video: false,
+                mic: false,
             };
         }
 

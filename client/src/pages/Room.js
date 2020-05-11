@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useSelector } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import Media from '../components/Media';
 import Chat from '../components/Chat';
@@ -8,35 +8,35 @@ import Games from '../components/Games';
 import { receiveUserData } from '../actions';
 
 import { Icon } from 'react-icons-kit';
+import { messageSquare } from 'react-icons-kit/feather/messageSquare';
 import { video } from 'react-icons-kit/feather/video';
 import { videoOff } from 'react-icons-kit/feather/videoOff';
 import { mic } from 'react-icons-kit/feather/mic';
 import { micOff } from 'react-icons-kit/feather/micOff';
-import { messageSquare } from 'react-icons-kit/feather/messageSquare';
 // import { joyPad } from 'react-icons-kit/linea/basic_joypad';
 
 
 
 const Room = () => {
-    const userVideo = useSelector(state => state.userReducer.video)
-    const userMic = useSelector(state => state.userReducer.mic)
+    // const userVideo = useSelector(state => state.userReducer.video)
+    // const userMic = useSelector(state => state.userReducer.mic)
     const dispatch = useDispatch();
 
     //concider room ID
-    //change icons with '/' and with shadow when in use
+    //change buttons to icons
 
     const chatClick = () => {
         console.log('chatClick');
     }
 
     const videoClick = () => {
-        console.log('videoClick');
-        userVideo ? dispatch(receiveUserData(false)) : dispatch(receiveUserData(true)); //HELP
+        console.log('cameraClick');
+        //userMic ? dispatch(receiveUserData(false)) : dispatch(receiveUserData(true)); //HELP
     }
 
     const micClick = () => {
         console.log('micCheck');
-        userMic ? dispatch(receiveUserData(false)) : dispatch(receiveUserData(true)); //HELP
+        //userMic ? dispatch(receiveUserData(false)) : dispatch(receiveUserData(true)); //HELP
     }
 
     const gamesClick = () => {
@@ -52,7 +52,7 @@ const Room = () => {
                 <MyButton onClick={chatClick}><Icon icon={messageSquare} /></MyButton>
                 <MyButton onClick={videoClick}><Icon icon={video} /></MyButton>
                 <MyButton onClick={micClick}><Icon icon={mic} /></MyButton>
-                <MyButton onClick={gamesClick}>Games</MyButton>
+                <MyButton onClick={gamesClick}>games</MyButton>
             </NavDiv>
             <ChatDiv>
                 <Chat />
@@ -89,6 +89,7 @@ const MediaDiv = styled.div`
 const NavDiv = styled.div`
     width: 100%;
     height: 5%;
+    background-color: red;
     position: absolute;
     bottom: 0;
 
