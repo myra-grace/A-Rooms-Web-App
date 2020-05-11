@@ -9,9 +9,11 @@ export const requestUserData = (user) => ({
     user,
 })
 
-export const receiveUserData = (user) => ({
+export const receiveUserData = (user, video, mic) => ({
     type: 'RECEIVE_USER_DATA',
     user,
+    video,
+    mic,
 })
 
 export const receiveUserDataError = () => ({

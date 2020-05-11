@@ -41,7 +41,7 @@ const SignIn = () => {
             <StyledDiv>
                 <form>
                     <Avatar src="https://i.imgflip.com/hkcl6.jpg?a441288" /><br/>
-                    <StyledInput type="text" name="alias" placeholder="Enter one time use username" value={input} onChange={handleInput}></StyledInput>
+                    <StyledInput type="text" name="alias" placeholder="Enter one time use username" value={input} onChange={handleInput}></StyledInput><br/>
                     <SubmitButton type="submit" onClick={handleSubmit}>Submit</SubmitButton>
                     <StyledP>Sign-in with Google</StyledP>
                 </form>
