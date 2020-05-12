@@ -1,7 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link, Redirect } from 'react-router-dom';
+
+const useKey = (key, cb) => {
+    const callbackRef = useRef(cb);
+
+    useEffect(() => {
+        callbackRef.current = cb;
+    });
+
+    useEffect(() => {
+        const keyHandler = (event) => {
+            if (event.code === key) {
+                callbackRef.current(event);
+            }
+        }
+        document.addEventListener("keypress", keyHandler);
+        return () => document.removeEventListener("keypress", keyHandler);
+    }, [key]);
+}
 
 const Home = () => {
     const [homeRedirect, setHomeRedirect] = useState(false)
@@ -28,6 +46,30 @@ const Home = () => {
         console.log('signed-in');
         // setFooter(username); messes up redirect to lobby
     }
+
+    const upHandler = () => {
+        console.log("UP");
+    }
+    useKey("KeyW", upHandler);
+    useKey("ArrowUp", upHandler);
+
+    const downHandler = () => {
+        console.log("DOWN");
+    }
+    useKey("KeyS", downHandler);
+    useKey("ArrowDown", downHandler);
+
+    const leftHandler = () => {
+        console.log("LEFT");
+    }
+    useKey("KeyA", leftHandler);
+    useKey("ArrowLeft", leftHandler);
+
+    const rightHandler = () => {
+        console.log("RIGHT");
+    }
+    useKey("KeyD", rightHandler);
+    useKey("ArrowRight", rightHandler);
 
     return (
         <Wrapper>

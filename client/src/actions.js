@@ -4,14 +4,18 @@ export const chatWindow = () => ({
 
 //---------------------------------- USER ----------------------------------
 
-export const requestUserData = (user) => ({
+export const requestUserData = (user, video, mic) => ({
     type: 'REQUEST_USER_DATA',
     user,
+    video,
+    mic,
 })
 
-export const receiveUserData = (user) => ({
+export const receiveUserData = (user, video, mic) => ({
     type: 'RECEIVE_USER_DATA',
     user,
+    video,
+    mic,
 })
 
 export const receiveUserDataError = () => ({

@@ -1,6 +1,8 @@
 const initialState = {
     status: 'idle',
     user: null,
+    video: false,
+    mic: false,
 }
 
 const userReducer = (state = initialState, action) => {
@@ -10,6 +12,8 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 status: 'checking database',
                 user: action.user,
+                video: false,
+                mic: false,
             };
         }
 
@@ -17,7 +21,9 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: 'signed-in',
-                user: action.user
+                user: action.user,
+                video: action.video,
+                mic: action.mic,
             };
         }
 
