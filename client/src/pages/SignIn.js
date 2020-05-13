@@ -1,14 +1,15 @@
 import React, { useEffect, useContext, useState } from "react";
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
-
+import { Icon } from 'react-icons-kit';
+import {logIn} from 'react-icons-kit/feather/logIn';
 import { useDispatch, useSelector } from 'react-redux';
-import { requestUserData, receiveUserData, receiveUserDataError, } from '../actions';
+import { requestUserData, receiveUserData, receiveUsername, receiveUserDataError, } from '../actions';
 
 const SignIn = () => {
     const [input, setInput] = useState();
     const [redirect, setRedirect] = useState(false)
-    const user = useSelector(state => state.userReducer.user)
+    const user = useSelector(state => state.userReducer.username)
     const dispatch = useDispatch();
 
     //randomly generated photo
@@ -30,21 +31,21 @@ const SignIn = () => {
         //else
         // let avatar = 
         dispatch(receiveUserData(input));
+        dispatch(receiveUsername(input));
         setRedirect(true);
         //redirect to Lobby
-
     }
 
     return (
         <Wrapper>
             {redirect?<><Redirect to='/lobby'/></>:<>
             <StyledDiv>
-                <form>
-                    <Avatar src="https://i.imgflip.com/hkcl6.jpg?a441288" /><br/>
+                <Avatar src="https://i.imgflip.com/hkcl6.jpg?a441288" /><br/>
+                <StyledForm>
                     <StyledInput type="text" name="alias" placeholder="Enter one time use username" value={input} onChange={handleInput}></StyledInput><br/>
-                    <SubmitButton type="submit" onClick={handleSubmit}>Submit</SubmitButton>
-                    <StyledP>Sign-in with Google</StyledP>
-                </form>
+                    <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
+                </StyledForm>
+                <StyledP>Sign-in with Google</StyledP>
             </StyledDiv></>
             }
         </Wrapper>
@@ -74,6 +75,23 @@ const StyledDiv = styled.div`
     height: 50vh;
 
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`;
+
+const StyledForm = styled.form`
+    text-align: center;
+    border: none;
+    border-radius: 0 8px 0;
+    background-color: #c4b1ab;
+    box-shadow: 0 0 10px 5px #a1395b;
+    color: #a1395b;
+    width: 70%;
+    height: 10%;
+    
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
 `;
@@ -90,22 +108,21 @@ const StyledInput = styled.input`
     text-align: center;
     margin: 15px auto;
     border: none;
-    border-radius: 4px;
-    box-shadow: 0 0 10px 5px #a1395b;
+    background-color: transparent;
     color: #a1395b;
-    width: 300px;
-    height: 25px;
+    width: 90%;
+    height: 100%;
 `;
 
 const SubmitButton = styled.button`
     text-decoration: none;
-    color: #588b76;
-    margin: 0 auto;
+    color: #a1395b;
     padding: 2px;
     border: none;
-    border-radius: 4px;
-    background-color: #c4b1ab;
-    width: 300px;
+    border-radius: 0 8px 0 0;
+    background-color: #588b76;
+    width: 10%;
+    height: 100%;
 `
 
 const StyledP = styled.p`

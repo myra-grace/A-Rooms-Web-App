@@ -10,7 +10,7 @@ import SnakeGame from './games/SnakeGame';
 const Media = () => {
     return (
         <Wrapper>
-            <SnakeGame />
+            <p>Media</p>
         </Wrapper>
     )
 };

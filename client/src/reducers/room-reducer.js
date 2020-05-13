@@ -1,6 +1,10 @@
 const initialState = {
     status: 'idle',
-    room: null,
+    roomID: null,
+    game: null,
+    shareFile: null,
+    screenShare: null,
+    createJoin: null,
 }
 
 const roomReducer = (state = initialState, action) => {
@@ -9,7 +13,34 @@ const roomReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: 'creating a room',
-                room: action.room,
+                roomID: action.roomID,
+                createJoin: 'Create',
+            };
+        }
+
+        case 'JOIN_ROOM': {
+            return {
+                ...state,
+                status: 'joining room',
+                roomID: action.roomID,
+                createJoin: 'Join',
+            };
+        }
+
+        case 'ROOM_GAME_SELECTION': {
+            return {
+                ...state,
+                status: 'game selection',
+                game: action.game
+            };
+        }
+
+        case 'EXIT_ROOM': {
+            return {
+                ...state,
+                status: 'exited room',
+                roomID: null,
+                createJoin: null,
             };
         }
 
@@ -17,7 +48,10 @@ const roomReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: 'checking for room',
-                room: action.room,
+                roomID: action.roomID,
+                game: action.game,
+                shareFile: action.shareFile,
+                screenShare: action.screenShare
             };
         }
 
@@ -25,7 +59,11 @@ const roomReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: 'found room',
-                room: action.room
+                roomID: action.roomID,
+                game: action.game,
+                shareFile: action.shareFile,
+                screenShare: action.screenShare,
+                createJoin: action.createJoin,
             };
         }
 

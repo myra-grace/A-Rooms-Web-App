@@ -2,9 +2,28 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
+
+
 const Share = () => {
+
+    let file = {};
+    
+    const fileUpload = (event) => {
+        console.log('file upload');
+        file = event.target.files[0];
+    }
+
+    const handleUpload = (event) => {
+        console.log('Cliked to upload');
+    }
+
     return (
-        <h1>SHARE COMPONENT</h1>
+        <Wrapper>
+            <form>
+                <input type='file' onChange={fileUpload} />
+                <button onClick={handleUpload}>Submit</button>
+            </form>
+        </Wrapper>
     )
 }
 

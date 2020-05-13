@@ -1,9 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import SnakeGame from '../media/games/SnakeGame'
 
-const Games = () => {
+const GamesSelector = () => {
     return (
-        <p>GAMES COMPONENT</p>
+        <Wrapper>
+            <p>GAME SELECTOR COMPONENT</p>
+        </Wrapper>
     )
 };
 
@@ -12,10 +15,13 @@ const Games = () => {
 const Wrapper = styled.div`
     width: 100%;
     height: 100%;
+    background-color: orange;
 
     display: flex;
     align-items: center;
     justify-content: center;
+    //scroll thingy
+    //overflow thing
 `;
 
-export default Games;
+export default GamesSelector;

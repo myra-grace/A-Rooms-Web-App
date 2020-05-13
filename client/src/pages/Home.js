@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link, Redirect } from 'react-router-dom';
+import { createRoom, joinRoom } from '../actions';
 
 const useKey = (key, cb) => {
     const callbackRef = useRef(cb);
@@ -27,16 +28,25 @@ const Home = () => {
     const status = useSelector(state => state.userReducer.status)
     const username = useSelector(state => state.userReducer.user)
 
+    // const [redirect, setRedirect] = useState(false)
+    const roomID = useSelector(state => state.roomReducer.roomID);
+    const selection = useSelector(state => state.roomReducer.createJoin);
+    const dispatch = useDispatch();
+
     //if already signed-in (google) redirect to Lobby
     //if already signed-in div background is avatar
     //if already signed-in "Sign-in" link changes to username
 
     const handleCreate = () => {
         console.log('CREATE');
+        dispatch(createRoom());
+        // setRedirect(true);
     };
 
     const handleJoin = () => {
         console.log('JOIN');
+        dispatch(joinRoom());
+        // setRedirect(true);
     };
 
     if (status !== "signed-in") {
@@ -123,9 +133,9 @@ const MyButton = styled.button`
 
 const SignInLink = styled(Link)`
     text-decoration: none;
-    color: #588b76;
-    position: absolute;
-    bottom: 40px;
+    color: #c4b1ab;
+    position: fixed;
+    bottom: 10px;
     text-shadow: 0 0 10px  #a1395b;
 `
 

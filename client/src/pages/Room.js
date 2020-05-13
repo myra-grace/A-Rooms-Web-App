@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Media from '../media/Media';
 import Chat from '../components/Chat';
-import Games from '../components/Games';
+import GamesSelector from '../components/GamesSelector';
 import Share from '../media/Share';
 
-import { receiveUserData } from '../actions';
+import { receiveUserData, 
+    receiveUsername, 
+    shareScreenToggle, 
+    videoToggle, 
+    micToggle } from '../actions';
 
 import { Icon } from 'react-icons-kit';
 import { messageSquare } from 'react-icons-kit/feather/messageSquare';
@@ -33,13 +37,15 @@ import Queue from '../components/Queue';
 
 
 const Room = () => {
-    const [showChat, setShowChat] = useState(true)
-    const [showGames, setShowGames] = useState(true)
-    const [showShare, setShowShare] = useState(true)
+    const [showChat, setShowChat] = useState(false)
+    const [showGames, setShowGames] = useState(false)
+    const [showShare, setShowShare] = useState(false)
     // const [screenShareButton, setScreenShareButton] = useState(ic_stop_screen_share)
     const [videoButton, setVideoButton] = useState(videoOff)
     const [shareButton, setShareButton] = useState(share)
     const [micButton, setMicButton] = useState(micOff)
+    const userScreen = useSelector(state => state.userReducer.shareScreen)
+    console.log('userScreen: ', userScreen);
     const userVideo = useSelector(state => state.userReducer.video)
     const userMic = useSelector(state => state.userReducer.mic)
     const dispatch = useDispatch();
@@ -57,20 +63,10 @@ const Room = () => {
         }
     }
 
-    const videoClick = () => {
-        console.log('videoClick');
-        if (videoButton === videoOff) {
-            setVideoButton(video)
-        } else {
-            setVideoButton(videoOff)
-        }
-        // userMic ? dispatch((receiveUserData(false)).video) : dispatch((receiveUserData(true)).video); //HELP
-    }
-
     const shareClick = () => {
         //if share screen, change icon to x
         console.log('screen share Click');
-        if (showShare === false) {
+        if (userScreen === false) {
             setShowShare(true);
         } else {
             setShowShare(false);
@@ -80,17 +76,27 @@ const Room = () => {
         // } else {
         //     setScreenShareButton(ic_stop_screen_share)
         // }
-        // userMic ? dispatch((receiveUserData(false)).screen) : dispatch((receiveUserData(true)).screen); //HELP
+        dispatch(shareScreenToggle(!userScreen))
+    }
+
+    const videoClick = () => {
+        console.log('videoClick');
+        if (userVideo === false) {
+            setVideoButton(video)
+        } else {
+            setVideoButton(videoOff)
+        }
+        dispatch(videoToggle(!userVideo))
     }
 
     const micClick = () => {
         console.log('micCheck');
-        if (micButton === micOff) {
+        if (userMic === false) {
             setMicButton(mic)
         } else {
             setMicButton(micOff)
         }
-        // userMic ? dispatch(receiveUserData(false)) : dispatch(receiveUserData(true)); //HELP
+        dispatch(micToggle(!userMic))
     }
 
     const gamesClick = () => {
@@ -102,6 +108,11 @@ const Room = () => {
         }
     }
 
+    useEffect(() => {
+        //FIX VIDEOONOFF MICONOFF
+        
+    }, [userScreen, userVideo, userMic])
+
 
     return (
         <Wrapper>
@@ -109,7 +120,7 @@ const Room = () => {
                 <Media />
             </MediaDiv>
 
-            {showChat ? null :
+            {!showChat ? null :
             <ChatWrapper>
                 <QueueDiv>
                     <Queue />
@@ -120,13 +131,13 @@ const Room = () => {
             </ChatWrapper>
             }
 
-            {showGames ? null :
+            {!showGames ? null :
             <GamesDiv>
-                <Games />
+                <GamesSelector />
             </GamesDiv>
             }
 
-            {showShare ? null :
+            {!showShare ? null :
             <ShareDiv>
                 <Share />
             </ShareDiv>
@@ -237,7 +248,7 @@ const GamesDiv = styled.div`
 
 const ShareDiv = styled.div`
     border: 3px solid #d0ded8;
-    border-radius: 8px;
+    border-radius: 0 20px 0;
     box-shadow: 0 0 10px 5px #588b76;
     background-color: #588b76;
     width: 50%;
@@ -247,6 +258,7 @@ const ShareDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1;
 `;
 
 export default Room;
