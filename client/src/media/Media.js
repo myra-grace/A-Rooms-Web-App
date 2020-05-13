@@ -8,6 +8,9 @@ import SnakeGame from './games/SnakeGame';
 //---------------------------------------------------------------------------
 
 const Media = () => {
+    //render queue item at first place in here
+    //New component for selecting from queue?
+    //object-fit: cover everything? No, fitinto
     return (
         <Wrapper>
             <p>Media</p>

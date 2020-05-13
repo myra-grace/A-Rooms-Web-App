@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
+import AppProvider from './components/AppContext';
 import App from './components/App';
 
 import configureStore from './store';
@@ -19,23 +20,16 @@ const store = configureStore();
 // npm install -g firebase-tools
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-    <script src="/__/firebase/7.14.3/firebase-app.js"></script>
-    <script src="/__/firebase/7.14.3/firebase-auth.js"></script>
-    <script src="/__/firebase/7.14.3/firebase-storage.js"></script>
-    <script src="/__/firebase/7.14.3/firebase-analytics.js"></script>
-    <script src="/__/firebase/init.js"></script>
-
-    {/* <script defer src="https://www.gstatic.com/firebasejs/7.14.3/firebase-app.js"></script>
-
-    <script defer src="https://www.gstatic.com/firebasejs/7.14.3/firebase-auth.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/7.14.3/firebase-firestore.js"></script>
-
-    // ...
-
-    <script defer src="./init-firebase.js"></script> */}
-  </Provider>,
+  // <AppProvider>
+    <Provider store={store}>
+      <App />
+      <script src="/__/firebase/7.14.3/firebase-app.js"></script>
+      <script src="/__/firebase/7.14.3/firebase-auth.js"></script>
+      <script src="/__/firebase/7.14.3/firebase-storage.js"></script>
+      <script src="/__/firebase/7.14.3/firebase-analytics.js"></script>
+      <script src="/__/firebase/init.js"></script>
+    </Provider>,
+  // </AppProvider>,
   document.getElementById('root')
 );
 
