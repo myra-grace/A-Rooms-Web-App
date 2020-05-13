@@ -5,11 +5,15 @@ import styled from 'styled-components';
 
 
 const Share = () => {
-    const fileUpload = () => {
+
+    let file = {};
+    
+    const fileUpload = (event) => {
         console.log('file upload');
+        file = event.target.files[0];
     }
 
-    const handleUpload = () => {
+    const handleUpload = (event) => {
         console.log('Cliked to upload');
     }
 
