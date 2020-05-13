@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
-
-import chatReducer from './chat-reducer';
 import userReducer from './user-reducer'
+import roomReducer from './room-reducer'
+import chatReducer from './chat-reducer';
 
 export default combineReducers({
-    chatReducer,
     userReducer,
+    roomReducer,
+    chatReducer,
 });

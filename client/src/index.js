@@ -11,6 +11,9 @@ const store = configureStore();
 ReactDOM.render(
   <Provider store={store}>
     <App />
+    <script src="/__/firebase/7.14.3/firebase-app.js"></script>
+    <script src="/__/firebase/7.14.3/firebase-analytics.js"></script>
+    <script src="/__/firebase/init.js"></script>
   </Provider>,
   document.getElementById('root')
 );

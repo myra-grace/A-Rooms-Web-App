@@ -20,8 +20,8 @@ const useKey = (key, cb) => {
     }, [key]);
 }
 
-const CANVAS_SIZE = [500, 500];
-const SCALE = 20;
+const CANVAS_SIZE = [450, 450];
+const SCALE = 15;
 const SPEED = 100;
 const SNAKE_START = [
     [8, 7],
@@ -36,49 +36,56 @@ const SnakeGame = () => {
     const [apple, setApple] = useState(APPLE_START);
     const [dir, setDir] = useState([0,-1]);
     const [speedState, setSpeedState] = useState(null);
-    const [gameOver, setGameOver] = useState(false);
-
-
-    const handleStartGame = () => {
-        setSnake(SNAKE_START);
-        setApple(APPLE_START);
-        setDir([0, -1]);
-        setSpeedState(SPEED);
-        setGameOver(true);
-    }
-
-    const handleEndGame = () => {
-        setSpeedState(null);
-        setGameOver(false);
-    }
+    const [gameOver, setGameOver] = useState(true);
+    const [playing, setPlaying] = useState(false);
 
     const upHandler = () => {
-        console.log("UP");
         setDir([0, -1]);
     }
     useKey("KeyW", upHandler);
     useKey("ArrowUp", upHandler);
 
     const downHandler = () => {
-        console.log("DOWN");
         setDir([0, 1]);
     }
     useKey("KeyS", downHandler);
     useKey("ArrowDown", downHandler);
 
     const leftHandler = () => {
-        console.log("LEFT");
         setDir([-1, 0]);
     }
     useKey("KeyA", leftHandler);
     useKey("ArrowLeft", leftHandler);
 
     const rightHandler = () => {
-        console.log("RIGHT");
         setDir([1, 0]);
     }
     useKey("KeyD", rightHandler);
     useKey("ArrowRight", rightHandler);
+
+    const startHandler = () => {
+        if (playing === true) {
+            return
+        } 
+        handleStartGame();
+    }
+    useKey("Space", startHandler);
+    useKey("Enter", startHandler);
+
+    const handleStartGame = () => {
+        setSnake(SNAKE_START);
+        setApple(APPLE_START);
+        setDir([0, -1]);
+        setSpeedState(SPEED);
+        setGameOver(false);
+        setPlaying(true);
+    }
+
+    const handleEndGame = () => {
+        setSpeedState(null);
+        setGameOver(true);
+        setPlaying(false);
+    }
 
     const handleCreateApple = () => {
         apple.map((_a, i) => Math.floor(Math.random() * (CANVAS_SIZE[i] / SCALE)));
@@ -165,7 +172,7 @@ const SnakeGame = () => {
                 height={`${CANVAS_SIZE[1]}px`}
                 />
             </div>
-            {!gameOver ? 
+            {gameOver ? 
             <StyledButton onClick={handleStartGame}>START GAME</StyledButton>
             : null}
         </Wrapper>

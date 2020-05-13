@@ -11,11 +11,36 @@ export const requestUserData = (user, video, mic) => ({
     mic,
 })
 
-export const receiveUserData = (user, video, mic) => ({
+export const receiveUserData = (username, video, mic) => ({
     type: 'RECEIVE_USER_DATA',
-    user,
+    user: username,
     video,
     mic,
+})
+
+export const receiveUsername = (username) => ({
+    type: 'RECEIVE_USERNAME',
+    username
+})
+
+export const receiveUserAvatar = (userAvatar) => ({
+    type: 'RECEIVE_USER_AVATAR',
+    userAvatar
+})
+
+export const shareScreenToggle = (shareScreen) => ({
+    type: 'SHARE_SCREEN_TOGGLE',
+    shareScreen
+})
+
+export const videoToggle = (video) => ({
+    type: 'VIDEO_TOGGLE',
+    video
+})
+
+export const micToggle = (mic) => ({
+    type: 'MIC_TOGGLE',
+    mic
 })
 
 export const receiveUserDataError = () => ({
@@ -24,19 +49,36 @@ export const receiveUserDataError = () => ({
 
 //---------------------------------- ROOM ----------------------------------
 
-export const createRoom = (room) => ({
+export const createRoom = (roomID, createJoin) => ({
     type: 'CREATE_ROOM',
-    room,
+    roomID,
+    createJoin,
 })
 
-export const requestRoomData = (room) => ({
+export const joinRoom = (roomID, createJoin) => ({
+    type: 'JOIN_ROOM',
+    roomID,
+    createJoin,
+})
+
+export const roomGameSelection = (game) => ({
+    type: 'ROOM_GAME_SELECTION',
+    game,
+})
+
+export const exitRoom = (roomID) => ({
+    type: 'EXIT_ROOM',
+    roomID,
+})
+
+export const requestRoomData = (roomID) => ({
     type: 'REQUEST_ROOM_DATA',
-    room,
+    roomID,
 })
 
-export const receiveRoomData = (room) => ({
+export const receiveRoomData = (roomID) => ({
     type: 'RECEIVE_ROOM_DATA',
-    room,
+    roomID,
 })
 
 export const receiveRoomDataError = () => ({

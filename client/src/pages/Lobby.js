@@ -3,6 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
 import Home from './Home';
+import Rooms from '../components/Rooms';
+import Friends from '../components/Friends';
+
 
 const Lobby = () => {
     const [lobbyRedirect, setLobbyRedirect] = useState(false)
@@ -21,26 +24,13 @@ const Lobby = () => {
         <Wrapper>
             {lobbyRedirect?<><Redirect to='/sign-in'/></>:<>
             <LeftDiv>
-                {/* <Rooms /> */}
-                <ul>
-                    <li>Test Room</li>
-                    <li>Test Room</li>
-                    <li>Test Room</li>
-                    <li>Test Room</li>
-                    <li>Test Room</li>
-                </ul>
+                <Rooms />
             </LeftDiv>
             <MiddleDiv>
                 <Home />
             </MiddleDiv>
             <RightDiv>
-                <ul>
-                    <li>Test Room</li>
-                    <li>Test Room</li>
-                    <li>Test Room</li>
-                    <li>Test Room</li>
-                    <li>Test Room</li>
-                </ul>
+                <Friends />
             </RightDiv></>
             }
         </Wrapper>
