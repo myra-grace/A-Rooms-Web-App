@@ -40,12 +40,14 @@ const Home = () => {
     const handleCreate = () => {
         console.log('CREATE');
         dispatch(createRoom());
+        //post to fireBase
         // setRedirect(true);
     };
 
     const handleJoin = () => {
         console.log('JOIN');
         dispatch(joinRoom());
+        //pull data from fireBase
         // setRedirect(true);
     };
 

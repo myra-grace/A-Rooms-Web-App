@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-dom';
 //---------------------------------------------------------------------------
 
 const Rooms = () => {
+    //pull room info from fireBase
     return (
         <ul>
             <li>Test Room</li>

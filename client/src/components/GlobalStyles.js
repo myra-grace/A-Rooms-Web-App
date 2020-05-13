@@ -37,6 +37,7 @@ const GlobalStyles = createGlobalStyle`
         text-decoration: none;
         list-style: none;
         color: #c4b1ab;
+        //color: #f47a0e;
     }
 
     button, a {
