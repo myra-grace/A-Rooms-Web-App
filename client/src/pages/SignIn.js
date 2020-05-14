@@ -5,6 +5,7 @@ import { Icon } from 'react-icons-kit';
 import {logIn} from 'react-icons-kit/feather/logIn';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestUserData, receiveUserData, receiveUsername, receiveUserDataError, } from '../actions';
+import firebase from 'firebase';
 
 const SignIn = () => {
     const [input, setInput] = useState();
@@ -12,8 +13,14 @@ const SignIn = () => {
     const user = useSelector(state => state.userReducer.username)
     const dispatch = useDispatch();
 
+    let avatarInput = document.getElementById('avatarpholder');
+    let emailInput = document.getElementById('email');
+    let pwordInput = document.getElementById('password');
+
     //randomly generated photo
     //perhaps use meme api
+
+    let avatarPic = {};
 
     const handleInput = (event) => {
         event.preventDefault();
@@ -21,8 +28,13 @@ const SignIn = () => {
         //limit character length
         let username = event.target.value;
         // let avatar = 
-        setInput(username);
-        dispatch(requestUserData(username));
+
+        // setInput(username);
+        // dispatch(requestUserData(username));
+    }
+
+    const handleAvatarInput = (event) => {
+        avatarPic = event.target.files[0];
     }
 
     const handleSubmit = (event) => {
@@ -30,9 +42,23 @@ const SignIn = () => {
         //check if user already exists
         //else
         // let avatar = 
-        dispatch(receiveUserData(input));
-        dispatch(receiveUsername(input));
+        
+        // dispatch(receiveUserData(input));
+        // dispatch(receiveUsername(input));
         setRedirect(true);
+
+        // const user = firebase.auth().signInWithCustomToken('username', {
+        //     oneTimeUseUsername: `${input}`
+        // });
+
+        firebase.auth().createUserWithEmailAndPassword(emailInput.value, pwordInput.value).then(auth => {
+            firebase.storage().ref('users/' + auth.user.uid + '/avatar').put(avatarPic).then(function () {
+                console.log('success');
+            })
+        }).catch(error => {
+            console.log(error.message);
+        })
+
         //redirect to Lobby
     }
 
@@ -40,10 +66,12 @@ const SignIn = () => {
         <Wrapper>
             {redirect?<><Redirect to='/lobby'/></>:<>
             <StyledDiv>
-                <Avatar src="https://i.imgflip.com/hkcl6.jpg?a441288" /><br/>
+                <Avatar id="avatarpholder" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973461_960_720.png" /><br/>
                 <StyledForm>
-                    <StyledInput type="text" name="alias" placeholder="Enter one time use username" value={input} onChange={handleInput}></StyledInput><br/>
-                    <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
+                    <StyledInput id="email" type="email" placeholder="Email" value={input} onChange={handleInput}></StyledInput><br/>
+                    <StyledInput id="password" type="password" placeholder="Password" value={input} onChange={handleInput}></StyledInput><br/>
+                    <StyledInput type="file" onChange={handleAvatarInput}></StyledInput>
+                    <SubmitButton type="submit" onClick={handleSubmit}>Submit</SubmitButton>
                 </StyledForm>
                 <StyledP>Sign-in with Google</StyledP>
             </StyledDiv></>
@@ -71,8 +99,8 @@ const StyledDiv = styled.div`
     box-shadow: 0 0 10px 5px #588b76;
     background-color: #588b76;
 
-    width: 50vw;
-    height: 50vh;
+    width: 400px;
+    height: 400px;
 
     display: flex;
     flex-direction: column;
@@ -82,16 +110,10 @@ const StyledDiv = styled.div`
 
 const StyledForm = styled.form`
     text-align: center;
-    border: none;
-    border-radius: 0 8px 0;
-    background-color: #c4b1ab;
-    box-shadow: 0 0 10px 5px #a1395b;
-    color: #a1395b;
-    width: 70%;
-    height: 10%;
+    // background-color: red;
     
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 `;
@@ -106,27 +128,28 @@ const Avatar = styled.img`
 
 const StyledInput = styled.input`
     text-align: center;
-    margin: 15px auto;
+    // margin: 15px auto;
     border: none;
-    background-color: transparent;
+    border-radius: 8px;
+    // background-color: transparent;
     color: #a1395b;
-    width: 90%;
-    height: 100%;
+    // width: 90%;
+    // height: 100%;
 `;
 
 const SubmitButton = styled.button`
     text-decoration: none;
-    color: #a1395b;
+    color: #588b76;
+    margin: 10px;
     padding: 2px;
     border: none;
-    border-radius: 0 8px 0 0;
-    background-color: #588b76;
-    width: 10%;
-    height: 100%;
+    border-radius: 8px;
+    background-color: #a1395b;
+    width: 60%;
 `
 
 const StyledP = styled.p`
-    margin-top: 20px;
+    // margin-top: 20px;
 `;
 
 export default SignIn;
