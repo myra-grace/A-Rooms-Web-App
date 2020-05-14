@@ -13,7 +13,6 @@ const roomReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: 'creating a room',
-                roomID: action.roomID,
                 createJoin: 'Create',
             };
         }
@@ -22,11 +21,26 @@ const roomReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: 'joining room',
-                roomID: action.roomID,
                 createJoin: 'Join',
             };
         }
 
+        case 'RECEIVE_ROOM_ID': {
+            return {
+                ...state,
+                status: 'Saved ID',
+                roomID: action.roomID,
+            };
+        }
+
+        case 'RECEIVE_USER_TO_ROOM': {
+            return {
+                ...state,
+                status: 'Entered room',
+                user: action.user,
+            };
+        }
+        
         case 'ROOM_GAME_SELECTION': {
             return {
                 ...state,
