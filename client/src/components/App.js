@@ -21,13 +21,13 @@ import firebase from 'firebase';
 
 const App = () => {
   //----------------- DATA BASE -----------------
-  const userDB = document.getElementById('users');
-  console.log('userDB: ', userDB);
-  const dbRefObject = firebase.database().ref().child('users');
+  // const userDB = document.getElementById('users');
+  // console.log('userDB: ', userDB);
+  // const dbRefObject = firebase.database().ref().child('users');
   
-  dbRefObject.on('value', snap => {
-      userDB.innerText = JSON.stringify(snap.val(), null, 3);
-  });
+  // dbRefObject.on('value', snap => {
+  //     userDB.innerText = JSON.stringify(snap.val(), null, 3);
+  // });
 
   return (
     <Router>

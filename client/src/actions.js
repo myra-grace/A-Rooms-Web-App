@@ -4,19 +4,27 @@ export const chatWindow = () => ({
 
 //---------------------------------- USER ----------------------------------
 
-export const requestUserData = (user, video, mic) => ({
+export const requestUserData = (id, user, video, mic) => ({
     type: 'REQUEST_USER_DATA',
+    id,
     user,
     video,
     mic,
 })
 
-export const receiveUserData = (username, video, mic) => ({
+export const receiveUserData = (id, username, video, mic) => ({
     type: 'RECEIVE_USER_DATA',
+    id: id,
     user: username,
     video,
     mic,
 })
+
+export const receiveUserId = (id) => ({
+    type: 'RECEIVE_USER_ID',
+    id
+})
+
 
 export const receiveUsername = (username) => ({
     type: 'RECEIVE_USERNAME',

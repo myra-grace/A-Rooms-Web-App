@@ -1,5 +1,6 @@
 const initialState = {
     status: 'idle',
+    id: null,
     username: null,
     userAvatar: null,
     shareScreen: false,
@@ -13,8 +14,10 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: 'checking database',
+                id: action.id,
                 username: action.username,
                 userAvatar: action.userAvatar,
+                shareScreen: false,
                 video: false,
                 mic: false,
             };
@@ -24,11 +27,19 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 status: 'signed-in',
+                id: action.id,
                 username: action.username,
                 userAvatar: action.userAvatar,
                 shareScreen: action.shareScreen,
                 video: action.video,
                 mic: action.mic,
+            };
+        }
+
+        case 'RECEIVE_USER_ID': {
+            return {
+                ...state,
+                id: action.id,
             };
         }
 

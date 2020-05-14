@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { Icon } from 'react-icons-kit';
 import {logIn} from 'react-icons-kit/feather/logIn';
 import { useDispatch, useSelector } from 'react-redux';
-import { requestUserData, receiveUserData, receiveUsername, receiveUserDataError, } from '../actions';
+import { requestUserData, receiveUserData, receiveUserId, receiveUsername, receiveUserDataError, } from '../actions';
 import firebase from 'firebase';
 
 const SignIn = () => {
@@ -30,7 +30,7 @@ const SignIn = () => {
     const usersRef = database.ref('users');
 
     let avatarPic = {};
-    
+
     const maxCharacters = 12
     let characters = 0;
 
@@ -55,12 +55,14 @@ const SignIn = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        const userID = Date.now();
         //check if user already exists
         //else
         // let avatar = 
         
-        // dispatch(receiveUserData(input));
-        // dispatch(receiveUsername(input));
+        dispatch(receiveUserData());
+        dispatch(receiveUserId(userID));
+        dispatch(receiveUsername(input));
         setRedirect(true);
 
         // firebase.auth().createUserWithEmailAndPassword(emailInput.value, pwordInput.value).then(auth => {
@@ -71,7 +73,6 @@ const SignIn = () => {
         //     console.log(error.message);
         // })
 
-        let userID = Date.now();
         usersRef.child(`${userID}`).set({
             username: usernameInput.value,
             userAvatar: 'stringed title of random meme',
@@ -91,8 +92,8 @@ const SignIn = () => {
                 <Avatar id="avatarpholder" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973461_960_720.png" /><br/>
                 <StyledForm>
                     <StyledInput id="userInput" type="text" placeholder="One time use username" value={input} onChange={handleInput}></StyledInput><br/>
-                    <StyledInput type="file" onChange={handleAvatarInput}></StyledInput>
-                    <SubmitButton type="submit" onClick={handleSubmit}>Submit</SubmitButton>
+                    {/* <StyledInput type="file" onChange={handleAvatarInput}></StyledInput> */}
+                    <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
                 </StyledForm>
                 <StyledP>Sign-in with Google</StyledP>
             </StyledDiv></>
@@ -131,10 +132,14 @@ const StyledDiv = styled.div`
 
 const StyledForm = styled.form`
     text-align: center;
-    // background-color: red;
+    background-color: #a1395b;
+    width: 60%;
+    height: 10%;
+    border-radius: 0 8px 0;
+    box-shadow: 0 0 10px 5px #588b76;
     
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
 `;
@@ -149,28 +154,26 @@ const Avatar = styled.img`
 
 const StyledInput = styled.input`
     text-align: center;
-    // margin: 15px auto;
     border: none;
-    border-radius: 8px;
-    // background-color: transparent;
-    color: #a1395b;
-    // width: 90%;
-    // height: 100%;
+    background-color: transparent;
+    color: #c4b1ab;
+    width: 90%;
+    height: 100%;
 `;
 
 const SubmitButton = styled.button`
     text-decoration: none;
-    color: #588b76;
+    color: #c4b1ab;
     margin: 10px;
     padding: 2px;
     border: none;
     border-radius: 8px;
     background-color: #a1395b;
-    width: 60%;
+    width: 10%;
 `
 
 const StyledP = styled.p`
-    // margin-top: 20px;
+    margin-top: 20px;
 `;
 
 export default SignIn;
