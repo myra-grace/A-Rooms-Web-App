@@ -38,6 +38,14 @@ const Home = () => {
     //if already signed-in div background is avatar
     //if already signed-in "Sign-in" link changes to username
 
+    if (status !== "signed-in") {
+        console.log('not signed-in');
+        // setHomeRedirect(true); HELP
+    } else {
+        console.log('signed-in');
+        // setLogin(usernameRedux); HELP
+    }
+
     const handleCreate = () => {
         console.log('CREATE');
         dispatch(createRoom());
@@ -49,40 +57,8 @@ const Home = () => {
         console.log('JOIN');
         dispatch(joinRoom());
         //pull data from fireBase
-        // setRedirect(true);
+        // setRedirect(true); HELP
     };
-
-    if (status !== "signed-in") {
-        console.log('not signed-in');
-        // setHomeRedirect(true);
-    } else {
-        console.log('signed-in');
-        // setLogin(usernameRedux);
-    }
-
-    const upHandler = () => {
-        console.log("UP");
-    }
-    useKey("KeyW", upHandler);
-    useKey("ArrowUp", upHandler);
-
-    const downHandler = () => {
-        console.log("DOWN");
-    }
-    useKey("KeyS", downHandler);
-    useKey("ArrowDown", downHandler);
-
-    const leftHandler = () => {
-        console.log("LEFT");
-    }
-    useKey("KeyA", leftHandler);
-    useKey("ArrowLeft", leftHandler);
-
-    const rightHandler = () => {
-        console.log("RIGHT");
-    }
-    useKey("KeyD", rightHandler);
-    useKey("ArrowRight", rightHandler);
 
     return (
         <Wrapper>

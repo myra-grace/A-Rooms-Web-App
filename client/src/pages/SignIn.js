@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
 import { Icon } from 'react-icons-kit';
@@ -7,27 +7,35 @@ import { useDispatch, useSelector } from 'react-redux';
 import { requestUserData, receiveUserData, receiveUserId, receiveUsername, receiveUserDataError, } from '../actions';
 import firebase from 'firebase';
 
+const useKey = (key, cb) => {
+    const callbackRef = useRef(cb);
+
+    useEffect(() => {
+        callbackRef.current = cb;
+    });
+
+    useEffect(() => {
+        const keyHandler = (event) => {
+            if (event.code === key) {
+                callbackRef.current(event);
+            }
+        }
+        document.addEventListener("keypress", keyHandler);
+        return () => document.removeEventListener("keypress", keyHandler);
+    }, [key]);
+}
+
 const SignIn = () => {
-    const [input, setInput] = useState();
-    const [redirect, setRedirect] = useState(false)
-    const username = useSelector(state => state.userReducer.username)
-    const dispatch = useDispatch();
-//------------------ STORAGE ------------------
-    let avatarInput = document.getElementById('avatarpholder');
-    let usernameInput = document.getElementById('userInput');
-//----------------- DATA BASE -----------------
-    // const userDB = document.getElementById('users');
-    // const dbRefObject = firebase.database().ref().child('users');
-    
-    // dbRefObject.on('value', snap => {
-    //     userDB.innerText = JSON.stringify(snap.val(), null, 3);
-    // });
-
-    //randomly generated photo
-    //perhaps use meme api
-
     const database = firebase.database();
     const usersRef = database.ref('users');
+    const [input, setInput] = useState();
+    const [redirect, setRedirect] = useState(false);
+    const username = useSelector(state => state.userReducer.username);
+    let avatarInput = document.getElementById('avatarpholder');
+    let usernameInput = document.getElementById('userInput');
+    const dispatch = useDispatch();
+    //randomly generated photo
+    //perhaps use meme api
 
     let avatarPic = {};
 
@@ -85,6 +93,8 @@ const SignIn = () => {
         //redirect to Lobby
     }
 
+    useKey("Enter", handleSubmit);
+
     return (
         <Wrapper>
             {redirect?<><Redirect to='/lobby'/></>:<>
@@ -132,11 +142,13 @@ const StyledDiv = styled.div`
 
 const StyledForm = styled.form`
     text-align: center;
-    background-color: #a1395b;
-    width: 60%;
-    height: 10%;
+    border: none;
     border-radius: 0 8px 0;
-    box-shadow: 0 0 10px 5px #588b76;
+    background-color: #c4b1ab;
+    box-shadow: 0 0 10px 5px #a1395b;
+    color: #a1395b;
+    width: 70%;
+    height: 10%;
     
     display: flex;
     flex-direction: row;
@@ -156,20 +168,20 @@ const StyledInput = styled.input`
     text-align: center;
     border: none;
     background-color: transparent;
-    color: #c4b1ab;
-    width: 90%;
+    color: #a1395b;
+    width: 100%;
     height: 100%;
 `;
 
 const SubmitButton = styled.button`
     text-decoration: none;
-    color: #c4b1ab;
-    margin: 10px;
+    color: #a1395b;
     padding: 2px;
     border: none;
-    border-radius: 8px;
-    background-color: #a1395b;
+    border-radius: 0 8px 0 0;
+    background-color: #588b76;
     width: 10%;
+    height: 100%;
 `
 
 const StyledP = styled.p`

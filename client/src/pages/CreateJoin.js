@@ -1,34 +1,85 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { createRoom, joinRoom } from '../actions';
 import { Icon } from 'react-icons-kit';
 import {logIn} from 'react-icons-kit/feather/logIn';
+import firebase from 'firebase';
+import { receiveRoomId, receiveUserToRoom } from '../actions';
+import SignIn from "./SignIn";
+
+const useKey = (key, cb) => {
+    const callbackRef = useRef(cb);
+
+    useEffect(() => {
+        callbackRef.current = cb;
+    });
+
+    useEffect(() => {
+        const keyHandler = (event) => {
+            if (event.code === key) {
+                callbackRef.current(event);
+            }
+        }
+        document.addEventListener("keypress", keyHandler);
+        return () => document.removeEventListener("keypress", keyHandler);
+    }, [key]);
+}
 
 const CreateJoin = () => {
-    // const [redirect, setRedirect] = useState(false)
-    const roomID = useSelector(state => state.roomReducer.roomID);
+    const database = firebase.database();
+    const roomsRef = database.ref('rooms');
+    // const [redirect, setRedirect] = useState(false);
+    const [room, setRoom] = useState();
+    // const roomID = useSelector(state => state.roomReducer.roomID);
     const selection = useSelector(state => state.roomReducer.createJoin);
+    const userID = useSelector(state => state.userReducer.id);
+    let roomInput = document.getElementById('room');
     const dispatch = useDispatch();
 
-    const handleSubmit = (event) => {
+    if (selection === null) {
+        console.log('REDIRECT TO SIGN-IN');
+        // setRedirect(true); HELP
+    }
+
+    const handleInput = (event) => {
         event.preventDefault();
         let room = event.target.value;
-        //check if user already exists
-        //redirect to /room
-        if (selection === "Create") {
-            dispatch(createRoom(room));
-            // setRedirect(true);
-        }
-        dispatch(joinRoom(room));
-        // setRedirect(true);
+        setRoom(room);
+        //if creating -->
+        dispatch(receiveRoomId(room));
     }
+    
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (selection === "Create") {
+            dispatch(receiveRoomId(room));
+            dispatch(receiveUserToRoom(userID));
+            //check if room already exists
+            roomsRef.child(`${room}`).set({
+                roomID: room,
+                userIDs: userID,
+            })
+        }
+        dispatch(receiveRoomId(room));
+        dispatch(receiveUserToRoom(userID));
+        //check if room already exists
+        roomsRef.child(`${room}`).update({
+            roomID: room,
+            userIDs: userID,
+        })
+        dispatch(joinRoom());
+        // setRedirect(true); HELP
+    }
+
+    useKey("Enter", handleSubmit);
+
+    const placeholderString = `${selection}: room ID`
 
     return (
         <Wrapper>
-            <h1>{selection}</h1>
             <StyledForm>
-                <StyledInput type="text" name="room" placeholder="Enter room ID"></StyledInput>
+                <StyledInput id="roomInput" type="text" placeholder={placeholderString} value={room} onChange={handleInput}></StyledInput>
                 <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
             </StyledForm>
         </Wrapper>
@@ -47,7 +98,7 @@ const Wrapper = styled.div`
     height: 500px;
 
     display: flex;
-    // flex-direction: column;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 `;

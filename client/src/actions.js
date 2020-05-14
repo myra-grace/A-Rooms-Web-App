@@ -57,16 +57,22 @@ export const receiveUserDataError = () => ({
 
 //---------------------------------- ROOM ----------------------------------
 
-export const createRoom = (roomID, createJoin) => ({
+export const createRoom = () => ({
     type: 'CREATE_ROOM',
-    roomID,
-    createJoin,
 })
 
-export const joinRoom = (roomID, createJoin) => ({
+export const joinRoom = () => ({
     type: 'JOIN_ROOM',
-    roomID,
-    createJoin,
+})
+
+export const receiveRoomId = (roomID) => ({
+    type: 'RECEIVE_ROOM_ID',
+    roomID: roomID
+})
+
+export const receiveUserToRoom = (user) => ({
+    type: 'RECEIVE_USER_TO_ROOM',
+    user: user
 })
 
 export const roomGameSelection = (game) => ({
