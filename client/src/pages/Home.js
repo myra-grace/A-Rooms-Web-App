@@ -23,10 +23,11 @@ const useKey = (key, cb) => {
 }
 
 const Home = () => {
+    const [login, setLogin] = useState("Sign-in");
     const [homeRedirect, setHomeRedirect] = useState(false)
-    const [footer, setFooter] = useState("Sign-in")
     const status = useSelector(state => state.userReducer.status)
-    const username = useSelector(state => state.userReducer.user)
+    const usernameRedux = useSelector(state => state.userReducer.username)
+    console.log('usernameRedux: ', usernameRedux);
 
     // const [redirect, setRedirect] = useState(false)
     const roomID = useSelector(state => state.roomReducer.roomID);
@@ -56,7 +57,7 @@ const Home = () => {
         // setHomeRedirect(true);
     } else {
         console.log('signed-in');
-        // setFooter(username); messes up redirect to lobby
+        // setLogin(usernameRedux);
     }
 
     const upHandler = () => {
@@ -89,7 +90,7 @@ const Home = () => {
             <StyledDiv>
                 <MyButton onClick={handleCreate}>Create</MyButton>
                 <MyButton onClick={handleJoin}>Join</MyButton>
-                <SignInLink to="/sign-in">{footer}</SignInLink>
+                <SignInLink to="/sign-in">{login}</SignInLink>
             </StyledDiv></>
             }
         </Wrapper>

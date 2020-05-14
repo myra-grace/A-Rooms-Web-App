@@ -4,32 +4,48 @@ import { Redirect } from 'react-router-dom';
 import { Icon } from 'react-icons-kit';
 import {logIn} from 'react-icons-kit/feather/logIn';
 import { useDispatch, useSelector } from 'react-redux';
-import { requestUserData, receiveUserData, receiveUsername, receiveUserDataError, } from '../actions';
+import { requestUserData, receiveUserData, receiveUserId, receiveUsername, receiveUserDataError, } from '../actions';
 import firebase from 'firebase';
 
 const SignIn = () => {
     const [input, setInput] = useState();
     const [redirect, setRedirect] = useState(false)
-    const user = useSelector(state => state.userReducer.username)
+    const username = useSelector(state => state.userReducer.username)
     const dispatch = useDispatch();
-
+//------------------ STORAGE ------------------
     let avatarInput = document.getElementById('avatarpholder');
-    let emailInput = document.getElementById('email');
-    let pwordInput = document.getElementById('password');
+    let usernameInput = document.getElementById('userInput');
+//----------------- DATA BASE -----------------
+    // const userDB = document.getElementById('users');
+    // const dbRefObject = firebase.database().ref().child('users');
+    
+    // dbRefObject.on('value', snap => {
+    //     userDB.innerText = JSON.stringify(snap.val(), null, 3);
+    // });
 
     //randomly generated photo
     //perhaps use meme api
 
+    const database = firebase.database();
+    const usersRef = database.ref('users');
+
     let avatarPic = {};
+
+    const maxCharacters = 12
+    let characters = 0;
 
     const handleInput = (event) => {
         event.preventDefault();
         //assign random avatar
         //limit character length
-        let username = event.target.value;
-        // let avatar = 
-
-        // setInput(username);
+        const userTyped = event.target.value;
+        characters = userTyped.length
+        if (characters > maxCharacters) {
+            return
+        } else {
+            setInput(userTyped);
+        }
+        // setEmail(emailTyped);
         // dispatch(requestUserData(username));
     }
 
@@ -39,24 +55,31 @@ const SignIn = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        const userID = Date.now();
         //check if user already exists
         //else
         // let avatar = 
         
-        // dispatch(receiveUserData(input));
-        // dispatch(receiveUsername(input));
+        dispatch(receiveUserData());
+        dispatch(receiveUserId(userID));
+        dispatch(receiveUsername(input));
         setRedirect(true);
 
-        // const user = firebase.auth().signInWithCustomToken('username', {
-        //     oneTimeUseUsername: `${input}`
-        // });
+        // firebase.auth().createUserWithEmailAndPassword(emailInput.value, pwordInput.value).then(auth => {
+        //     firebase.storage().ref('users/' + auth.user.uid + '/avatar').put(avatarPic).then(function () {
+        //         console.log('success');
+        //     })
+        // }).catch(error => {
+        //     console.log(error.message);
+        // })
 
-        firebase.auth().createUserWithEmailAndPassword(emailInput.value, pwordInput.value).then(auth => {
-            firebase.storage().ref('users/' + auth.user.uid + '/avatar').put(avatarPic).then(function () {
-                console.log('success');
-            })
-        }).catch(error => {
-            console.log(error.message);
+        usersRef.child(`${userID}`).set({
+            username: usernameInput.value,
+            userAvatar: 'stringed title of random meme',
+            shareScreen: false,
+            video: false,
+            mic: false,
+            onetime: true,
         })
 
         //redirect to Lobby
@@ -68,10 +91,9 @@ const SignIn = () => {
             <StyledDiv>
                 <Avatar id="avatarpholder" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973461_960_720.png" /><br/>
                 <StyledForm>
-                    <StyledInput id="email" type="email" placeholder="Email" value={input} onChange={handleInput}></StyledInput><br/>
-                    <StyledInput id="password" type="password" placeholder="Password" value={input} onChange={handleInput}></StyledInput><br/>
-                    <StyledInput type="file" onChange={handleAvatarInput}></StyledInput>
-                    <SubmitButton type="submit" onClick={handleSubmit}>Submit</SubmitButton>
+                    <StyledInput id="userInput" type="text" placeholder="One time use username" value={input} onChange={handleInput}></StyledInput><br/>
+                    {/* <StyledInput type="file" onChange={handleAvatarInput}></StyledInput> */}
+                    <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
                 </StyledForm>
                 <StyledP>Sign-in with Google</StyledP>
             </StyledDiv></>
@@ -110,10 +132,14 @@ const StyledDiv = styled.div`
 
 const StyledForm = styled.form`
     text-align: center;
-    // background-color: red;
+    background-color: #a1395b;
+    width: 60%;
+    height: 10%;
+    border-radius: 0 8px 0;
+    box-shadow: 0 0 10px 5px #588b76;
     
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
 `;
@@ -128,28 +154,26 @@ const Avatar = styled.img`
 
 const StyledInput = styled.input`
     text-align: center;
-    // margin: 15px auto;
     border: none;
-    border-radius: 8px;
-    // background-color: transparent;
-    color: #a1395b;
-    // width: 90%;
-    // height: 100%;
+    background-color: transparent;
+    color: #c4b1ab;
+    width: 90%;
+    height: 100%;
 `;
 
 const SubmitButton = styled.button`
     text-decoration: none;
-    color: #588b76;
+    color: #c4b1ab;
     margin: 10px;
     padding: 2px;
     border: none;
     border-radius: 8px;
     background-color: #a1395b;
-    width: 60%;
+    width: 10%;
 `
 
 const StyledP = styled.p`
-    // margin-top: 20px;
+    margin-top: 20px;
 `;
 
 export default SignIn;

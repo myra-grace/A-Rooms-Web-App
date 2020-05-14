@@ -5,6 +5,7 @@ import Media from '../media/Media';
 import Chat from '../components/Chat';
 import GamesSelector from '../components/GamesSelector';
 import Share from '../media/Share';
+import firebase from 'firebase';
 
 import { receiveUserData, 
     receiveUsername, 
@@ -37,6 +38,13 @@ import Queue from '../components/Queue';
 
 
 const Room = () => {
+    const database = firebase.database();
+    const usersRef = database.ref('users');
+    console.log('usersRef: ', usersRef);
+    const user = usersRef.child('1589477272489');
+    console.log('user: ', user);
+    
+    
     const [showChat, setShowChat] = useState(false)
     const [showGames, setShowGames] = useState(false)
     const [showShare, setShowShare] = useState(false)
@@ -47,6 +55,8 @@ const Room = () => {
     const userScreen = useSelector(state => state.userReducer.shareScreen)
     console.log('userScreen: ', userScreen);
     const userVideo = useSelector(state => state.userReducer.video)
+    // const userVideo = user.video;
+    // console.log('userVideo: ', userVideo);
     const userMic = useSelector(state => state.userReducer.mic)
     const dispatch = useDispatch();
 
@@ -86,6 +96,10 @@ const Room = () => {
         } else {
             setVideoButton(videoOff)
         }
+        const newData = {
+            video: !userVideo,
+        };
+        usersRef.child('1589477272489').update(newData)
         dispatch(videoToggle(!userVideo))
     }
 

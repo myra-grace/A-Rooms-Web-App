@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import firebase from 'firebase';
 
 const Chat = () => {
+    
+
     return (
         <Wrapper>
             <p>CHAT COMPONENT</p>
