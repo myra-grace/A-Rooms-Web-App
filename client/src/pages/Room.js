@@ -5,6 +5,7 @@ import Media from '../media/Media';
 import Chat from '../components/Chat';
 import GamesSelector from '../components/GamesSelector';
 import Share from '../media/Share';
+import firebase from 'firebase';
 
 import { receiveUserData, 
     receiveUsername, 

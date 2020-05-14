@@ -10,26 +10,42 @@ import firebase from 'firebase';
 const SignIn = () => {
     const [input, setInput] = useState();
     const [redirect, setRedirect] = useState(false)
-    const user = useSelector(state => state.userReducer.username)
+    const username = useSelector(state => state.userReducer.username)
     const dispatch = useDispatch();
-
+//------------------ STORAGE ------------------
     let avatarInput = document.getElementById('avatarpholder');
-    let emailInput = document.getElementById('email');
-    let pwordInput = document.getElementById('password');
+    let usernameInput = document.getElementById('userInput');
+//----------------- DATA BASE -----------------
+    // const userDB = document.getElementById('users');
+    // const dbRefObject = firebase.database().ref().child('users');
+    
+    // dbRefObject.on('value', snap => {
+    //     userDB.innerText = JSON.stringify(snap.val(), null, 3);
+    // });
 
     //randomly generated photo
     //perhaps use meme api
 
+    const database = firebase.database();
+    const usersRef = database.ref('users');
+
     let avatarPic = {};
+    
+    const maxCharacters = 12
+    let characters = 0;
 
     const handleInput = (event) => {
         event.preventDefault();
         //assign random avatar
         //limit character length
-        let username = event.target.value;
-        // let avatar = 
-
-        // setInput(username);
+        const userTyped = event.target.value;
+        characters = userTyped.length
+        if (characters > maxCharacters) {
+            return
+        } else {
+            setInput(userTyped);
+        }
+        // setEmail(emailTyped);
         // dispatch(requestUserData(username));
     }
 
@@ -47,16 +63,22 @@ const SignIn = () => {
         // dispatch(receiveUsername(input));
         setRedirect(true);
 
-        // const user = firebase.auth().signInWithCustomToken('username', {
-        //     oneTimeUseUsername: `${input}`
-        // });
+        // firebase.auth().createUserWithEmailAndPassword(emailInput.value, pwordInput.value).then(auth => {
+        //     firebase.storage().ref('users/' + auth.user.uid + '/avatar').put(avatarPic).then(function () {
+        //         console.log('success');
+        //     })
+        // }).catch(error => {
+        //     console.log(error.message);
+        // })
 
-        firebase.auth().createUserWithEmailAndPassword(emailInput.value, pwordInput.value).then(auth => {
-            firebase.storage().ref('users/' + auth.user.uid + '/avatar').put(avatarPic).then(function () {
-                console.log('success');
-            })
-        }).catch(error => {
-            console.log(error.message);
+        let userID = Date.now();
+        usersRef.child(`${userID}`).set({
+            username: usernameInput.value,
+            userAvatar: 'stringed title of random meme',
+            shareScreen: false,
+            video: false,
+            mic: false,
+            onetime: true,
         })
 
         //redirect to Lobby
@@ -68,8 +90,7 @@ const SignIn = () => {
             <StyledDiv>
                 <Avatar id="avatarpholder" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973461_960_720.png" /><br/>
                 <StyledForm>
-                    <StyledInput id="email" type="email" placeholder="Email" value={input} onChange={handleInput}></StyledInput><br/>
-                    <StyledInput id="password" type="password" placeholder="Password" value={input} onChange={handleInput}></StyledInput><br/>
+                    <StyledInput id="userInput" type="text" placeholder="One time use username" value={input} onChange={handleInput}></StyledInput><br/>
                     <StyledInput type="file" onChange={handleAvatarInput}></StyledInput>
                     <SubmitButton type="submit" onClick={handleSubmit}>Submit</SubmitButton>
                 </StyledForm>
