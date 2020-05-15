@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import { createRoom, joinRoom } from '../actions';
 import { Icon } from 'react-icons-kit';
 import {logIn} from 'react-icons-kit/feather/logIn';
@@ -29,7 +30,7 @@ const useKey = (key, cb) => {
 const CreateJoin = () => {
     const database = firebase.database();
     const roomsRef = database.ref('rooms');
-    // const [redirect, setRedirect] = useState(false);
+    const [lobbyRedirect, setLobbyRedirect] = useState(false);
     const [room, setRoom] = useState();
     // const roomID = useSelector(state => state.roomReducer.roomID);
     const selection = useSelector(state => state.roomReducer.createJoin);
@@ -57,19 +58,18 @@ const CreateJoin = () => {
             dispatch(receiveUserToRoom(userID));
             //check if room already exists
             roomsRef.child(`${room}`).set({
-                roomID: room,
-                userIDs: userID,
+                userIDs: [userID],
+                MediaQueue: [1],
+                chat: ['Welcome!'],
             })
+        } else {
+            //check if room already exists
+            roomsRef.child(`${room}`).child("userIDs").push(userID)
         }
         dispatch(receiveRoomId(room));
         dispatch(receiveUserToRoom(userID));
-        //check if room already exists
-        roomsRef.child(`${room}`).update({
-            roomID: room,
-            userIDs: userID,
-        })
         dispatch(joinRoom());
-        // setRedirect(true); HELP
+        setLobbyRedirect(true);
     }
 
     useKey("Enter", handleSubmit);
@@ -78,10 +78,12 @@ const CreateJoin = () => {
 
     return (
         <Wrapper>
+            {lobbyRedirect?<><Redirect from='/create-join' to='/room'/></>:<>
             <StyledForm>
                 <StyledInput id="roomInput" type="text" placeholder={placeholderString} value={room} onChange={handleInput}></StyledInput>
                 <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
-            </StyledForm>
+            </StyledForm></>
+            }
         </Wrapper>
     )
 };

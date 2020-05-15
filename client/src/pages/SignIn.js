@@ -28,7 +28,7 @@ const useKey = (key, cb) => {
 const SignIn = () => {
     const database = firebase.database();
     const usersRef = database.ref('users');
-    const [input, setInput] = useState();
+    const [input, setInput] = useState(null);
     const [redirect, setRedirect] = useState(false);
     const username = useSelector(state => state.userReducer.username);
     let avatarInput = document.getElementById('avatarpholder');
@@ -39,7 +39,7 @@ const SignIn = () => {
 
     let avatarPic = {};
 
-    const maxCharacters = 12
+    const maxCharacters = 12;
     let characters = 0;
 
     const handleInput = (event) => {
@@ -53,7 +53,6 @@ const SignIn = () => {
         } else {
             setInput(userTyped);
         }
-        // setEmail(emailTyped);
         // dispatch(requestUserData(username));
     }
 
@@ -65,39 +64,32 @@ const SignIn = () => {
         event.preventDefault();
         const userID = Date.now();
         //check if user already exists
-        //else
         // let avatar = 
-        
-        dispatch(receiveUserData());
-        dispatch(receiveUserId(userID));
-        dispatch(receiveUsername(input));
-        setRedirect(true);
+        if (input !== null) {
+            dispatch(receiveUserData());
+            dispatch(receiveUserId(userID));
+            dispatch(receiveUsername(input));
+            setRedirect(true);
 
-        // firebase.auth().createUserWithEmailAndPassword(emailInput.value, pwordInput.value).then(auth => {
-        //     firebase.storage().ref('users/' + auth.user.uid + '/avatar').put(avatarPic).then(function () {
-        //         console.log('success');
-        //     })
-        // }).catch(error => {
-        //     console.log(error.message);
-        // })
-
-        usersRef.child(`${userID}`).set({
-            username: usernameInput.value,
-            userAvatar: 'stringed title of random meme',
-            shareScreen: false,
-            video: false,
-            mic: false,
-            onetime: true,
-        })
-
-        //redirect to Lobby
+            usersRef.child(`${userID}`).set({
+                username: usernameInput.value,
+                userAvatar: 'stringed title of random meme',
+                shareScreen: false,
+                video: false,
+                mic: false,
+                room: null,
+                onetime: true,
+            })
+        } else {
+            return;
+        }
     }
 
     useKey("Enter", handleSubmit);
 
     return (
         <Wrapper>
-            {redirect?<><Redirect to='/lobby'/></>:<>
+            {redirect?<><Redirect from='/sign-in' to='/create-join'/></>:<>
             <StyledDiv>
                 <Avatar id="avatarpholder" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973461_960_720.png" /><br/>
                 <StyledForm>
