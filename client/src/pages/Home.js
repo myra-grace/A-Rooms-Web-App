@@ -50,19 +50,19 @@ const Home = () => {
         console.log('CREATE');
         dispatch(createRoom());
         //post to fireBase
-        // setRedirect(true);
+        setHomeRedirect(true);
     };
 
     const handleJoin = () => {
         console.log('JOIN');
         dispatch(joinRoom());
         //pull data from fireBase
-        // setRedirect(true); HELP
+        setHomeRedirect(true);
     };
 
     return (
         <Wrapper>
-            {homeRedirect?<><Redirect to='/sign-in'/></>:<>
+            {homeRedirect?<><Redirect from='/' to='/sign-in'/></>:<>
             <StyledDiv>
                 <MyButton onClick={handleCreate}>Create</MyButton>
                 <MyButton onClick={handleJoin}>Join</MyButton>

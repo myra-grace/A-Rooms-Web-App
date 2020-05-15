@@ -123,7 +123,14 @@ const Room = () => {
     }
 
     useEffect(() => {
-        //FIX VIDEOONOFF MICONOFF
+        //on leave, remove my user ID
+        //media queue live update
+        // roomsRef.child(`${room}`).update({
+        //     roomID: room,
+        //     userIDs: userID,
+        //     MediaQueue: [],
+        //     chat: [],
+        // })
         
     }, [userScreen, userVideo, userMic])
 
@@ -134,7 +141,7 @@ const Room = () => {
                 <Media />
             </MediaDiv>
 
-            {!showChat ? null :
+            {/* {!showChat ? null : */}
             <ChatWrapper>
                 <QueueDiv>
                     <Queue />
@@ -143,7 +150,7 @@ const Room = () => {
                     <Chat />
                 </ChatDiv>
             </ChatWrapper>
-            }
+            {/* } */}
 
             {!showGames ? null :
             <GamesDiv>
@@ -213,7 +220,6 @@ const MyButton = styled.button`
 const ChatWrapper = styled.div`
     width: 30%;
     height: 95%;
-    background-color: blue;
     position: absolute;
     left: 0;
     bottom: 5%;
@@ -239,7 +245,6 @@ const ChatWrapper = styled.div`
 
 const ChatDiv = styled.div`
     flex-grow: 3; 
-    background-color: red;
 `;
 
 const QueueDiv = styled.div`

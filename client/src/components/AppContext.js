@@ -15,6 +15,10 @@ const firebaseConfig = {
     measurementId: "G-V9FP7XC8ED"
 };
 
+const providers = {
+    googleProvider: new firebase.auth.GoogleAuthProvider(),
+};
+
 // let db = firebase.firestore();
 
 // const firebase = require("firebase");
@@ -23,11 +27,19 @@ const firebaseConfig = {
 
 export const AppContext = createContext(null);
 
-const AppProvider = ({ children }) => {
-    return <AppContext.Provider value={{}}>{children}</AppContext.Provider>;
+const AppProvider = ({ children, signInWithGoogle }) => {
+    return (
+    <AppContext.Provider value={{ signInWithGoogle }}>
+        {children}
+    </AppContext.Provider>
+    );
 };
 
-firebase.initializeApp(firebaseConfig);
-firebase.analytics();
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+// const firebaseAnalytics = firebase.analytics();
+const firebaseAppAuth = firebaseApp.auth();
 
-export default AppProvider;
+export default withFirebaseAuth({
+    providers,
+    firebaseAppAuth,
+})(AppProvider);
