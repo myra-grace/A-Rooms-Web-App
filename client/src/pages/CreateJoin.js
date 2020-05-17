@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { createRoom, joinRoom } from '../actions';
 import { Icon } from 'react-icons-kit';
 import {logIn} from 'react-icons-kit/feather/logIn';
 import firebase from 'firebase';
 import { receiveRoomId, receiveUserToRoom } from '../actions';
 import SignIn from "./SignIn";
+
 
 const useKey = (key, cb) => {
     const callbackRef = useRef(cb);
@@ -30,17 +31,17 @@ const useKey = (key, cb) => {
 const CreateJoin = () => {
     const database = firebase.database();
     const roomsRef = database.ref('rooms');
-    const [lobbyRedirect, setLobbyRedirect] = useState(false);
     const [room, setRoom] = useState();
+    const history = useHistory();
     // const roomID = useSelector(state => state.roomReducer.roomID);
     const selection = useSelector(state => state.roomReducer.createJoin);
     const userID = useSelector(state => state.userReducer.id);
+    const username = useSelector(state => state.userReducer.username);
     let roomInput = document.getElementById('room');
     const dispatch = useDispatch();
 
     if (selection === null) {
-        console.log('REDIRECT TO SIGN-IN');
-        // setRedirect(true); HELP
+        history.push(`/`);
     }
 
     const handleInput = (event) => {
@@ -53,23 +54,19 @@ const CreateJoin = () => {
     
     const handleSubmit = (event) => {
         event.preventDefault();
+        dispatch(receiveRoomId(room));
+        dispatch(receiveUserToRoom(userID));
+        dispatch(joinRoom());
         if (selection === "Create") {
             dispatch(receiveRoomId(room));
             dispatch(receiveUserToRoom(userID));
             //check if room already exists
-            roomsRef.child(`${room}`).set({
-                userIDs: [userID],
-                MediaQueue: [1],
-                chat: ['Welcome!'],
-            })
+            roomsRef.child(`${room}`).child("userIDs").child(`${userID}`).set(username)
         } else {
             //check if room already exists
-            roomsRef.child(`${room}`).child("userIDs").push(userID)
+            roomsRef.child(`${room}`).child("userIDs").child(`${userID}`).set(username)
         }
-        dispatch(receiveRoomId(room));
-        dispatch(receiveUserToRoom(userID));
-        dispatch(joinRoom());
-        setLobbyRedirect(true);
+        history.push(`/room/${room}`);
     }
 
     useKey("Enter", handleSubmit);
@@ -78,12 +75,10 @@ const CreateJoin = () => {
 
     return (
         <Wrapper>
-            {lobbyRedirect?<><Redirect from='/create-join' to='/room'/></>:<>
             <StyledForm>
-                <StyledInput id="roomInput" type="text" placeholder={placeholderString} value={room} onChange={handleInput}></StyledInput>
+                <StyledInput id="roomInput" type="text" placeholder={placeholderString} tabindex="1" value={room} onChange={handleInput}></StyledInput>
                 <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
-            </StyledForm></>
-            }
+            </StyledForm>
         </Wrapper>
     )
 };

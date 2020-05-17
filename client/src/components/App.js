@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
   BrowserRouter as Router,
@@ -22,6 +22,9 @@ import {AppContext} from './AppContext';
 //------------------------------------------------------------
 
 const App = () => {
+  const database = firebase.database();
+  const usersRef = database.ref('users');
+  const userID = useSelector(state => state.userReducer.id);
   // const { signInWithGoogle } = useContext(AppContext); HELP
 
   //----------------- DATA BASE -----------------
@@ -33,19 +36,21 @@ const App = () => {
   //     userDB.innerText = JSON.stringify(snap.val(), null, 3);
   // });
 
-  const room = useSelector(state => state.userReducer.roomID);
+  
+
+  usersRef.child(`${userID}`).onDisconnect().remove();
+
 
   return (
     <>
     <Router>
       <GlobalStyles />
-      <StyledLink exact to="/"><Icon icon={home} /></StyledLink>
+      <StyledLink exact to="/lobby"><Icon icon={home} /></StyledLink>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/sign-in" component={SignIn} />
         <Route exact path="/create-join" component={CreateJoin} />
-        {/* <Route exact path="/:room" component={Room} /> */}
-        <Route exact path="/room" component={Room} />
+        <Route exact path="/room/:roomID" component={Room} />
         <Route exact path="/lobby" component={Lobby} />
       </Switch>
     </Router>

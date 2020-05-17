@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import firebase from 'firebase';
 import { Icon } from 'react-icons-kit';
 import {ic_send} from 'react-icons-kit/md/ic_send'
+import MessageBubble from "./ChatMessage";
 
 
 const useKey = (key, cb) => {
@@ -27,21 +28,16 @@ const useKey = (key, cb) => {
 const Chat = () => {
     const database = firebase.database();
     const roomsRef = database.ref('rooms');
-    const [message, setMessage] = useState(null);
+    const [message, setMessage] = useState('');
     const username = useSelector(state => state.userReducer.username);
+    const userID = useSelector(state => state.userReducer.id);
+    const roomID = useSelector(state => state.roomReducer.roomID);
     let userInput = document.getElementById('userInput');
-    
 
     const dispatch = useDispatch();
 
-    const maxCharacters = 20;
+    const maxCharacters = 120;
     let characters = 0;
-    let count = 1;
-    console.log('count: ', count);
-
-    const counter = () => {
-        count += 1;
-    }
 
     const handleInput = (event) => {
         event.preventDefault();
@@ -50,42 +46,50 @@ const Chat = () => {
             return
         } else {
             setMessage(userTyped);
+            characters += 1;
         }
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (message !== null) {
-            //fix room `${room}`
-            roomsRef.child("wow").child("chat").child(`${username}`).push(userInput.value); //HELP
-            roomsRef.child("wow").on("child_added", snapshot => {
-            //show message in chat
-            console.log('MESSAGE ADDED');
-        })
-        setMessage(null); //NOT WORKING?
-        counter();
+        const currentDate = Date.now();
+        if (message !== '' && roomID  !== null) {
+            roomsRef.child(`${roomID}`).child("chat").child(`${currentDate}`).child(`${username}`).set(userInput.value);
+        setMessage('');
+        characters = 0;
         } else {
             return;
         }
     }
 
-    const handleRecieveMessages = () => {
-        //get from db
-        //fix room `${room}`
-        // roomsRef.child("Diamond is unbreakable").child("chat").on({
-        //     username: userInput.value,
-        // })
-        //put into test div
+    let messageArray = [];
+    console.log('messageArray: ', messageArray.length);
+    console.log('*****messageArray: ', messageArray); //WHY IS IT MAKING MULTIPLE COPIES(per how many messages there are)?
+
+    const handleRecieveMessages = (event) => {
+        let messages = {};
+        roomsRef.child(`${roomID}`).child("chat").on('child_added', snapshot => {
+            messages = snapshot.val();
+            messageArray.push(messages);
+            chatLimiter();
+        });
+        console.log('*****RECIEVED*****');
     }
 
     const chatLimiter = () => {
-        console.log('chatLimiter');
-        //fix room `${room}`
-        // roomsRef.child("test").child("chat").child("0").remove(); WORKED FIX TO REMOVE THE 1ST OF 20
+        if (messageArray.length > 20) {
+            messageArray.shift();
+        }
+        //count how many messages in "chat"
+        //if >20, remove oldest(smallest #)
+        // roomsRef.child(`${roomID}`).child("chat").child(`smallest#`).remove(); WORKED FIX TO REMOVE THE 1ST OF 20
+        //else return
     }
 
+    roomsRef.child(`${roomID}`).child("chat").once('child_added', handleRecieveMessages);
+    roomsRef.child(`${roomID}`).child("userIDs").child(`${userID}`).onDisconnect().remove();
+
     useKey("Enter", handleSubmit);
-    chatLimiter();
 
     return (
         <Wrapper>
@@ -93,13 +97,13 @@ const Chat = () => {
                 <StyledInput id="userInput" type="text" placeholder="Message" value={message} onChange={handleInput}></StyledInput>
                 <StyledButton onClick={handleSubmit}><Icon style={{color: '#c4b1ab'}} size="20" icon={ic_send} /></StyledButton>
             </StyledForm>
-            <div style={{display: "flex", flexDirection: "column"}}>
-                <div>
-                    <h1>TEST</h1>
-                    <p style={{color: "magenta", fontWeight: "bold"}}>{username}</p>
-                    <p>{message}</p>
-                </div>
-            </div>
+            {messageArray.reverse().map(bubble => {
+                return (
+                    <div style={{display: "flex", flexDirection: "column-reverse"}}>
+                        <MessageBubble username={Object.keys(bubble)} message={Object.values(bubble)}/>
+                    </div>
+                );
+            })}
         </Wrapper>
     )
 };

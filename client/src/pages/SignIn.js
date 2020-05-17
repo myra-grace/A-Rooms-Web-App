@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { Icon } from 'react-icons-kit';
 import {logIn} from 'react-icons-kit/feather/logIn';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,11 +29,12 @@ const SignIn = () => {
     const database = firebase.database();
     const usersRef = database.ref('users');
     const [input, setInput] = useState(null);
-    const [redirect, setRedirect] = useState(false);
     const username = useSelector(state => state.userReducer.username);
     let avatarInput = document.getElementById('avatarpholder');
     let usernameInput = document.getElementById('userInput');
     const dispatch = useDispatch();
+    const history = useHistory();
+
     //randomly generated photo
     //perhaps use meme api
 
@@ -69,7 +70,6 @@ const SignIn = () => {
             dispatch(receiveUserData());
             dispatch(receiveUserId(userID));
             dispatch(receiveUsername(input));
-            setRedirect(true);
 
             usersRef.child(`${userID}`).set({
                 username: usernameInput.value,
@@ -80,6 +80,7 @@ const SignIn = () => {
                 room: null,
                 onetime: true,
             })
+            history.push(`/create-join`);
         } else {
             return;
         }
@@ -89,17 +90,15 @@ const SignIn = () => {
 
     return (
         <Wrapper>
-            {redirect?<><Redirect from='/sign-in' to='/create-join'/></>:<>
             <StyledDiv>
                 <Avatar id="avatarpholder" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973461_960_720.png" /><br/>
                 <StyledForm>
-                    <StyledInput id="userInput" type="text" placeholder="One time use username" value={input} onChange={handleInput}></StyledInput><br/>
+                    <StyledInput id="userInput" type="text" placeholder="One time use username" tabindex="1" value={input} onChange={handleInput}></StyledInput><br/>
                     {/* <StyledInput type="file" onChange={handleAvatarInput}></StyledInput> */}
                     <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
                 </StyledForm>
                 <StyledP>Sign-in with Google</StyledP>
-            </StyledDiv></>
-            }
+            </StyledDiv>
         </Wrapper>
         
     )
