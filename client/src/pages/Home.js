@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import { createRoom, joinRoom } from '../actions';
 
 const useKey = (key, cb) => {
@@ -27,8 +27,7 @@ const Home = () => {
     const [homeRedirect, setHomeRedirect] = useState(false)
     const status = useSelector(state => state.userReducer.status)
     const usernameRedux = useSelector(state => state.userReducer.username)
-    console.log('usernameRedux: ', usernameRedux);
-
+    const history = useHistory();
     // const [redirect, setRedirect] = useState(false)
     const roomID = useSelector(state => state.roomReducer.roomID);
     const selection = useSelector(state => state.roomReducer.createJoin);
@@ -38,37 +37,37 @@ const Home = () => {
     //if already signed-in div background is avatar
     //if already signed-in "Sign-in" link changes to username
 
-    if (status !== "signed-in") {
-        console.log('not signed-in');
-        // setHomeRedirect(true); HELP
-    } else {
-        console.log('signed-in');
-        // setLogin(usernameRedux); HELP
-    }
-
     const handleCreate = () => {
         console.log('CREATE');
         dispatch(createRoom());
         //post to fireBase
-        setHomeRedirect(true);
+        if (status !== "signed-in") {
+            console.log('not signed-in');
+            history.push(`/sign-in`);
+        } else {
+            history.push(`/create-join`);
+        }
     };
 
     const handleJoin = () => {
         console.log('JOIN');
         dispatch(joinRoom());
         //pull data from fireBase
-        setHomeRedirect(true);
+        if (status !== "signed-in") {
+            console.log('not signed-in');
+            history.push(`/sign-in`);
+        } else {
+            history.push(`/create-join`);
+        }
     };
 
     return (
         <Wrapper>
-            {homeRedirect?<><Redirect from='/' to='/sign-in'/></>:<>
             <StyledDiv>
                 <MyButton onClick={handleCreate}>Create</MyButton>
                 <MyButton onClick={handleJoin}>Join</MyButton>
                 <SignInLink to="/sign-in">{login}</SignInLink>
-            </StyledDiv></>
-            }
+            </StyledDiv>
         </Wrapper>
     )
 };

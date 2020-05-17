@@ -40,9 +40,9 @@ import Queue from '../components/Queue';
 const Room = () => {
     const database = firebase.database();
     const usersRef = database.ref('users');
-    console.log('usersRef: ', usersRef);
-    const user = usersRef.child('1589477272489');
-    console.log('user: ', user);
+    const roomsRef = database.ref('rooms');
+    const roomID = useSelector(state => state.roomReducer.roomID);
+    const userID = useSelector(state => state.userReducer.id);
     
     
     const [showChat, setShowChat] = useState(false)
@@ -99,7 +99,7 @@ const Room = () => {
         const newData = {
             video: !userVideo,
         };
-        usersRef.child('1589477272489').update(newData)
+        usersRef.child(`${userID}`).update(newData)
         dispatch(videoToggle(!userVideo))
     }
 
@@ -110,6 +110,10 @@ const Room = () => {
         } else {
             setMicButton(micOff)
         }
+        const newData = {
+            mic: !userMic,
+        };
+        usersRef.child(`${userID}`).update(newData)
         dispatch(micToggle(!userMic))
     }
 
@@ -133,6 +137,13 @@ const Room = () => {
         // })
         
     }, [userScreen, userVideo, userMic])
+
+
+    const removeUser = (event) => {
+        // if only user, remove whole room, else
+        roomsRef.child(`${roomID}`).child("userIDs").child(`${userID}`).remove()
+        console.log('popstate');
+    }    
 
 
     return (
