@@ -1,28 +1,26 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Home from './Home';
 import Rooms from '../components/Rooms';
 import Friends from '../components/Friends';
 
 
 const Lobby = () => {
-    const [lobbyRedirect, setLobbyRedirect] = useState(false)
     const status = useSelector(state => state.userReducer.status)
+    const history = useHistory();
     
     //concider if signed-in with Google
     //else display random active rooms and maybe empty on right
     //IF SIGNED-IN "Sign-in" NOT CLICKABLE
 
     if (status !== "signed-in") {
-        console.log('not signed-in');
-        // setLobbyRedirect(true);
+        history.push(`/`);
     }
     
     return (
         <Wrapper>
-            {lobbyRedirect?<><Redirect to='/sign-in'/></>:<>
             <LeftDiv>
                 <Rooms />
             </LeftDiv>
@@ -31,8 +29,7 @@ const Lobby = () => {
             </MiddleDiv>
             <RightDiv>
                 <Friends />
-            </RightDiv></>
-            }
+            </RightDiv>
         </Wrapper>
     )
 };
