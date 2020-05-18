@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "site": "quaranteam",
     "public": "build",
     "ignore": [
       "firebase.json",
