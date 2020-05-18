@@ -24,6 +24,7 @@ import {AppContext} from './AppContext';
 const App = () => {
   const database = firebase.database();
   const usersRef = database.ref('users');
+  const storage = firebase.storage();
   const userID = useSelector(state => state.userReducer.id);
   // const { signInWithGoogle } = useContext(AppContext); HELP
 

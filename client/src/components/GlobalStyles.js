@@ -29,6 +29,11 @@ const GlobalStyles = createGlobalStyle`
         width: 100vw;
         height: 100vh;
         background-color: #1e2329;
+
+        &::-webkit-scrollbar {
+            width: 0;
+            display: none;
+        }
     }
 
     html, body, div, span, p, h1, h2, h3, h4, h5, h6 {
@@ -36,6 +41,7 @@ const GlobalStyles = createGlobalStyle`
         padding: 0;
         text-decoration: none;
         list-style: none;
+        word-wrap: break-word;
         color: #c4b1ab;
         //color: #f47a0e;
     }

@@ -96,13 +96,15 @@ const Chat = () => {
                 <StyledInput id="userInput" type="text" placeholder="Message" value={message} onChange={handleInput}></StyledInput>
                 <StyledButton onClick={handleSubmit}><Icon style={{color: '#c4b1ab'}} size="20" icon={ic_send} /></StyledButton>
             </StyledForm>
-            {messageArray.reverse().map(bubble => {
+            <StyledDiv>
+                {messageArray.reverse().map(bubble => {
                 return (
                     <div style={{display: "flex", flexDirection: "column-reverse"}}>
                         <MessageBubble username={Object.keys(bubble)} message={Object.values(bubble)}/>
                     </div>
                 );
             })}
+            </StyledDiv>
         </Wrapper>
     )
 };
@@ -110,6 +112,7 @@ const Chat = () => {
 //---------------------------------- STYLES ----------------------------------
 
 const Wrapper = styled.div`
+    width: 100%;
     height: 95%;
     padding: 10px;
     display: flex;
@@ -121,6 +124,19 @@ const StyledForm = styled.form`
     display: flex;
     flex-direction: row;
     width: 100%;
+`;
+
+const StyledDiv = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-x: auto;
+    
+    &::-webkit-scrollbar {
+        width: 0;
+        display: none;
+    }
 `;
 
 const StyledInput = styled.input`

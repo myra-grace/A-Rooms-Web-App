@@ -223,14 +223,17 @@ const MyButton = styled.button`
 `;
 
 const ChatWrapper = styled.div`
-    width: 30%;
+    width: 100%;
     height: 95%;
     position: absolute;
     left: 0;
     bottom: 5%;
 
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
 
 //     .fadeOut{
 //         opacity:0;
@@ -248,13 +251,15 @@ const ChatWrapper = styled.div`
 //    }
 `;
 
-const ChatDiv = styled.div`
-    flex-grow: 3; 
+const QueueDiv = styled.div`
+    // flex-grow: 1; 
+    grid-area: 1 / 1 / 2 / 2; 
+    background-color: orange;
 `;
 
-const QueueDiv = styled.div`
-    flex-grow: 1; 
-    background-color: orange;
+const ChatDiv = styled.div`
+    // flex-grow: 3;
+    grid-area: 2 / 1 / 5 / 2; 
 `;
 
 const GamesDiv = styled.div`
