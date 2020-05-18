@@ -87,7 +87,6 @@ const Chat = () => {
     }
 
     roomsRef.child(`${roomID}`).child("chat").once('child_added', handleRecieveMessages);
-    roomsRef.child(`${roomID}`).child("userIDs").child(`${userID}`).onDisconnect().remove();
 
     useKey("Enter", handleSubmit);
 

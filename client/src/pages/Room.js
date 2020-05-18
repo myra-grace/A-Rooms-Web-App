@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Media from '../media/Media';
 import Chat from '../components/Chat';
@@ -43,7 +44,12 @@ const Room = () => {
     const roomsRef = database.ref('rooms');
     const roomID = useSelector(state => state.roomReducer.roomID);
     const userID = useSelector(state => state.userReducer.id);
-    
+    const status = useSelector(state => state.userReducer.status)
+    const userMic = useSelector(state => state.userReducer.mic)
+    const userVideo = useSelector(state => state.userReducer.video)
+    const userScreen = useSelector(state => state.userReducer.shareScreen)
+    const dispatch = useDispatch();
+    const history = useHistory();
     
     const [showChat, setShowChat] = useState(false)
     const [showGames, setShowGames] = useState(false)
@@ -52,17 +58,16 @@ const Room = () => {
     const [videoButton, setVideoButton] = useState(videoOff)
     const [shareButton, setShareButton] = useState(share)
     const [micButton, setMicButton] = useState(micOff)
-    const userScreen = useSelector(state => state.userReducer.shareScreen)
-    console.log('userScreen: ', userScreen);
-    const userVideo = useSelector(state => state.userReducer.video)
     // const userVideo = user.video;
     // console.log('userVideo: ', userVideo);
-    const userMic = useSelector(state => state.userReducer.mic)
-    const dispatch = useDispatch();
-
+    
     //concider room ID
     //if not signed in redirect to sign-in
     //make sure state mic and video is false on leave?
+
+    if (status !== "signed-in") {
+        history.push(`/`);
+    }
 
     const chatClick = () => {
         console.log('chatClick');
@@ -126,24 +131,13 @@ const Room = () => {
         }
     }
 
-    useEffect(() => {
-        //on leave, remove my user ID
-        //media queue live update
-        // roomsRef.child(`${room}`).update({
-        //     roomID: room,
-        //     userIDs: userID,
-        //     MediaQueue: [],
-        //     chat: [],
-        // })
-        
-    }, [userScreen, userVideo, userMic])
-
-
+//HELP
     const removeUser = (event) => {
         // if only user, remove whole room, else
-        roomsRef.child(`${roomID}`).child("userIDs").child(`${userID}`).remove()
-        console.log('popstate');
+        // roomsRef.child(`${roomID}`).child("userIDs").child(`${userID}`).onDisconnect().remove();
     }    
+
+    roomsRef.child(`${roomID}`).child("userIDs").child(`${userID}`).onDisconnect().remove();
 
 
     return (
