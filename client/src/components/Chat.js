@@ -29,12 +29,11 @@ const Chat = () => {
     const database = firebase.database();
     const roomsRef = database.ref('rooms');
     const [message, setMessage] = useState('');
+    const [receive, setReceive] = useState([]);
     const username = useSelector(state => state.userReducer.username);
     const userID = useSelector(state => state.userReducer.id);
     const roomID = useSelector(state => state.roomReducer.roomID);
     let userInput = document.getElementById('userInput');
-
-    const dispatch = useDispatch();
 
     const maxCharacters = 120;
     let characters = 0;
@@ -62,44 +61,58 @@ const Chat = () => {
         }
     }
 
-    let messageArray = [];
-    console.log('messageArray: ', messageArray.length);
-    console.log('*****messageArray: ', messageArray); //WHY IS IT MAKING MULTIPLE COPIES(per how many messages there are)?
+    // const handleRecieveMessages = (event) => {
 
-    const handleRecieveMessages = (event) => {
+    const handleReceiveMessages = (message) => {
+        setReceive(receive.concat(message));
+    };
+
+    useEffect(() => {
+        console.log('useEffect');
         let messages = {};
+        let messageArray = [];
         roomsRef.child(`${roomID}`).child("chat").on('child_added', snapshot => {
+            
+            const chatLimiter = () => {
+                if (messageArray.length > 20) {
+                    messageArray.shift();
+                }
+                //count how many messages in "chat"
+                //if >20, remove oldest(smallest #)
+                // roomsRef.child(`${roomID}`).child("chat").child(`smallest#`).remove(); WORKED FIX TO REMOVE THE 1ST OF 20
+                //else return
+                }
+
             messages = snapshot.val();
             messageArray.push(messages);
-            chatLimiter();
+            console.log('messageArray: ', messageArray.length);
+            console.log('*****messageArray: ', messageArray); //WHY IS IT MAKING MULTIPLE COPIES(per how many messages there are)?
+            console.log('*****RECIEVED*****');
+            // chatLimiter();
+            handleReceiveMessages(messageArray);
         });
-        console.log('*****RECIEVED*****');
-    }
+    }, [])
+    
 
-    const chatLimiter = () => {
-        if (messageArray.length > 20) {
-            messageArray.shift();
-        }
-        //count how many messages in "chat"
-        //if >20, remove oldest(smallest #)
-        // roomsRef.child(`${roomID}`).child("chat").child(`smallest#`).remove(); WORKED FIX TO REMOVE THE 1ST OF 20
-        //else return
-    }
+    // }
+    
 
-    roomsRef.child(`${roomID}`).child("chat").once('child_added', handleRecieveMessages);
+    // roomsRef.child(`${roomID}`).child("chat").on('value', handleRecieveMessages);
 
-    useKey("Enter", handleSubmit);
+    // useKey("Enter", handleSubmit);
+    // handleRecieveMessages();
+
 
     return (
         <Wrapper>
-            <StyledForm>
-                <StyledInput id="userInput" type="text" placeholder="Message" value={message} onChange={handleInput}></StyledInput>
+            <StyledForm method="post" action="form">
+                <StyledInput id="userInput" type="text" placeholder="Message" autocomplete="nope" value={message} onChange={handleInput}></StyledInput>
                 <StyledButton onClick={handleSubmit}><Icon style={{color: '#c4b1ab'}} size="20" icon={ic_send} /></StyledButton>
             </StyledForm>
             <StyledDiv>
-                {messageArray.reverse().map(bubble => {
+                {receive.map((bubble, key) => {
                 return (
-                    <div style={{display: "flex", flexDirection: "column-reverse"}}>
+                    <div key={key} style={{display: "flex", flexDirection: "column-reverse", overflowAnchor: "auto", borderBottom: "1px solid transparent"}}>
                         <MessageBubble username={Object.keys(bubble)} message={Object.values(bubble)}/>
                     </div>
                 );
@@ -130,8 +143,9 @@ const StyledDiv = styled.div`
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column-reverse;
-    overflow-x: auto;
+    flex-direction: column;
+    overflow-x: scroll;
+    overflow-anchor: none;
     
     &::-webkit-scrollbar {
         width: 0;

@@ -3,7 +3,7 @@ const initialState = {
     id: null,
     username: null,
     userAvatar: null,
-    shareScreen: false,
+    shareDiv: false,
     video: false,
     mic: false,
 }
@@ -17,7 +17,7 @@ const userReducer = (state = initialState, action) => {
                 id: action.id,
                 username: action.username,
                 userAvatar: action.userAvatar,
-                shareScreen: false,
+                shareDiv: false,
                 video: false,
                 mic: false,
             };
@@ -30,7 +30,7 @@ const userReducer = (state = initialState, action) => {
                 id: action.id,
                 username: action.username,
                 userAvatar: action.userAvatar,
-                shareScreen: action.shareScreen,
+                shareDiv: action.shareScreen,
                 video: action.video,
                 mic: action.mic,
             };
@@ -39,6 +39,7 @@ const userReducer = (state = initialState, action) => {
         case 'RECEIVE_USER_ID': {
             return {
                 ...state,
+                status: 'signed-in',
                 id: action.id,
             };
         }
@@ -57,10 +58,10 @@ const userReducer = (state = initialState, action) => {
             };
         }
 
-        case 'SHARE_SCREEN_TOGGLE': {
+        case 'SHARE_DIV_TOGGLE': {
             return {
                 ...state,
-                shareScreen: action.shareScreen
+                shareDiv: action.shareDiv
             };
         }
 

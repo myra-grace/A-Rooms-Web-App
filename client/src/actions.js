@@ -36,9 +36,9 @@ export const receiveUserAvatar = (userAvatar) => ({
     userAvatar
 })
 
-export const shareScreenToggle = (shareScreen) => ({
-    type: 'SHARE_SCREEN_TOGGLE',
-    shareScreen
+export const shareDivToggle = (shareDiv) => ({
+    type: 'SHARE_DIV_TOGGLE',
+    shareDiv
 })
 
 export const videoToggle = (video) => ({
@@ -68,6 +68,11 @@ export const joinRoom = () => ({
 export const receiveRoomId = (roomID) => ({
     type: 'RECEIVE_ROOM_ID',
     roomID: roomID
+})
+
+export const addToSharedFiles = (sharedFile) => ({
+    type: 'SHARE_FILE',
+    sharedFile,
 })
 
 export const receiveUserToRoom = (user) => ({

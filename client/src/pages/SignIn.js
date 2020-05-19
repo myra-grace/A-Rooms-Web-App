@@ -67,7 +67,7 @@ const SignIn = () => {
         //check if user already exists
         // let avatar = 
         if (input !== null) {
-            dispatch(receiveUserData());
+            // dispatch(receiveUserData());
             dispatch(receiveUserId(userID));
             dispatch(receiveUsername(input));
 

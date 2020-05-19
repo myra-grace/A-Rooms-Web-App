@@ -2,7 +2,7 @@ const initialState = {
     status: 'idle',
     roomID: null,
     game: null,
-    shareFile: null,
+    sharedFiles: [],
     screenShare: null,
     createJoin: null,
 }
@@ -30,6 +30,14 @@ const roomReducer = (state = initialState, action) => {
                 ...state,
                 status: 'Saved ID',
                 roomID: action.roomID,
+            };
+        }
+
+        case 'SHARE_FILE': {
+            return {
+                ...state,
+                status: 'Recieved file',
+                sharedFiles: [...state.sharedFiles, action.sharedFile],
             };
         }
 
@@ -64,7 +72,7 @@ const roomReducer = (state = initialState, action) => {
                 status: 'checking for room',
                 roomID: action.roomID,
                 game: action.game,
-                shareFile: action.shareFile,
+                sharedFiles: action.sharedFiles,
                 screenShare: action.screenShare
             };
         }
@@ -75,7 +83,7 @@ const roomReducer = (state = initialState, action) => {
                 status: 'found room',
                 roomID: action.roomID,
                 game: action.game,
-                shareFile: action.shareFile,
+                sharedFiles: action.sharedFiles,
                 screenShare: action.screenShare,
                 createJoin: action.createJoin,
             };

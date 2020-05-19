@@ -10,7 +10,7 @@ import firebase from 'firebase';
 
 import { receiveUserData, 
     receiveUsername, 
-    shareScreenToggle, 
+    shareDivToggle, 
     videoToggle, 
     micToggle } from '../actions';
 
@@ -47,7 +47,7 @@ const Room = () => {
     const status = useSelector(state => state.userReducer.status)
     const userMic = useSelector(state => state.userReducer.mic)
     const userVideo = useSelector(state => state.userReducer.video)
-    const userScreen = useSelector(state => state.userReducer.shareScreen)
+    const shareDiv = useSelector(state => state.userReducer.shareDiv)
     const dispatch = useDispatch();
     const history = useHistory();
     
@@ -81,7 +81,7 @@ const Room = () => {
     const shareClick = () => {
         //if share screen, change icon to x
         console.log('screen share Click');
-        if (userScreen === false) {
+        if (shareDiv === false) {
             setShowShare(true);
         } else {
             setShowShare(false);
@@ -91,7 +91,7 @@ const Room = () => {
         // } else {
         //     setScreenShareButton(ic_stop_screen_share)
         // }
-        dispatch(shareScreenToggle(!userScreen))
+        dispatch(shareDivToggle(!shareDiv))
     }
 
     const videoClick = () => {
@@ -130,6 +130,10 @@ const Room = () => {
             setShowGames(false);
         }
     }
+
+    // useEffect(() => {
+    //     console.log('USEEFFECT');
+    // }, [status])
 
 //HELP
     const removeUser = (event) => {

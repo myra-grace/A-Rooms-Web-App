@@ -2,46 +2,53 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import firebase from 'firebase';
+import { shareDivToggle, addToSharedFiles } from '../actions';
 
 
 const Share = () => {
-    const storageRef = firebase.storage().ref;
-    const [file, setFile] = useState();
+    const database = firebase.database();
+    const usersRef = database.ref('users');
+    const roomsRef = database.ref('rooms');
+    const storage = firebase.storage();
+    const [file, setFile] = useState(null);
     const [progress, setProgress] = useState(0);
+    const [fileType, setFileType] = useState('');
     const roomID = useSelector(state => state.roomReducer.roomID);
+    const dispatch = useDispatch();
 
+    const handleImage = (event) => {
+        event.preventDefault();
+        setFileType('image-file');
+    }
 
-    // let file = {};
-    let uploader = document.getElementById('uploader');
+    const handleAudio = (event) => {
+        event.preventDefault();
+        setFileType('audio-file');
+    }
+
+    const handleVideo = (event) => {
+        event.preventDefault();
+        setFileType('video-file');
+    }
+
+    const handleWeb = (event) => {
+        event.preventDefault();
+        setFileType('web');
+    }
 
     const fileUpload = (event) => {
-        console.log('file upload - ONCHANGE');
-        let theFile = event.target.file[0];
-        setFile(theFile);
-
-        // let file = event.target.files[0];
-        // let storageRef = storage.ref(`${file.name}`);
-        // let task = storageRef.put(file);
-        // task.on('state_changed',
-        //     function progress (snapshot) {
-        //         let percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        //         uploader.value = percentage;
-        //     },
-
-            // const error = () => {
-
-            // }
-
-            // const complete = () => {
-
-            // }
-        // )
+        if (event.target.files[0]) {
+            setFile(event.target.files[0]);
+        }        
     }
 
     const handleUpload = (event) => {
-        console.log('Cliked to upload');
-        const makeUpload = storageRef.child('rooms').child(`${roomID}`).child(`${file}`);
-        makeUpload.on(
+        event.preventDefault();
+        if (fileType === '') {
+            return
+        }
+        const uploadTask = storage.ref(`rooms/${roomID}/${file.name}`).put(file)
+        uploadTask.on(
             "state_changed",
             snapshot => {
                 const fileProgress = Math.round(
@@ -53,25 +60,33 @@ const Share = () => {
                 console.log(error);
             },
             () => {
-                storageRef.child('rooms')
+                storage.ref('rooms')
                 .child(`${roomID}`)
-                .child(`${file}`)
+                .child(`${file.name}`)
                 .getDownloadURL()
-                .then(url => {
-
-                })
+                .then(theurl => {
+                    const fileID = Date.now();
+                    roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`${theurl}`);
+                    dispatch(addToSharedFiles(fileID));
+                });
             }
         )
+        setFileType('');
+        dispatch(shareDivToggle());
     }
 
     return (
         <Wrapper>
             <button>Share Screen</button>
-            <styledForm>
-                <progress id="uploader" value={progress} max="100">{progress}</progress><br/>
+            <button onClick={handleWeb}>Browse the web</button>
+            <StyledForm>
+                <Styledprogress id="uploader" value={progress} max="100">{progress}</Styledprogress><br/>
                 <input type='file' style={{border: "2px solid black"}} onChange={fileUpload} /><br/>
+                <button onClick={handleImage}>Image</button>
+                <button onClick={handleVideo}>Video</button>
+                <button onClick={handleAudio}>Audio</button><br/>
                 <button onClick={handleUpload}>Submit</button>
-            </styledForm>
+            </StyledForm>
         </Wrapper>
     )
 }
@@ -89,7 +104,7 @@ const Wrapper = styled.div`
     justify-content: center;
 `;
 
-const styledButton = styled.button`
+const StyledButton = styled.button`
     text-decoration: none;
     color: #a1395b;
     font-size: 40px;
@@ -100,17 +115,22 @@ const styledButton = styled.button`
     width: 60%;
 `;
 
-const styledForm = styled.form`
+const StyledForm = styled.form`
     width: 60%;
     height: 60%;
+    background-color: blue;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 `;
 
-const styledprogress = styled.progress`
+const Styledprogress = styled.progress`
     width: 60%;
     height: 10%;
 
-    -webkit-appearance: 'none';
-    appearance:"none";
+    &::-webkit-appearance: meter;
 `;
 
 export default Share;
