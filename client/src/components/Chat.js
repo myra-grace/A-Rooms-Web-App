@@ -144,7 +144,7 @@ const StyledDiv = styled.div`
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-anchor: none;
     
     &::-webkit-scrollbar {
