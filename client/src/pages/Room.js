@@ -20,14 +20,6 @@ import {ic_stop_screen_share} from 'react-icons-kit/md/ic_stop_screen_share'
 import {ic_screen_share} from 'react-icons-kit/md/ic_screen_share'
 import {share} from 'react-icons-kit/feather/share'
 
-import {xFeather} from 'react-icons-kit/feather/x'
-import {x} from 'react-icons-kit/oct/x'
-import {androidClose} from 'react-icons-kit/ionicons/androidClose'
-import {ic_close} from 'react-icons-kit/md/ic_close'
-import {ic_cancel} from 'react-icons-kit/md/ic_cancel'
-import {cross} from 'react-icons-kit/icomoon/cross'
-//queue icon and funcionality in chat box
-
 import { video } from 'react-icons-kit/feather/video';
 import { videoOff } from 'react-icons-kit/feather/videoOff';
 import { mic } from 'react-icons-kit/feather/mic';
@@ -150,7 +142,7 @@ const Room = () => {
                 <Media />
             </MediaDiv>
 
-            {/* {!showChat ? null : */}
+            {!showChat ? null :
             <ChatWrapper>
                 <QueueDiv>
                     <Queue />
@@ -159,7 +151,7 @@ const Room = () => {
                     <Chat />
                 </ChatDiv>
             </ChatWrapper>
-            {/* } */}
+            }
 
             {!showGames ? null :
             <GamesDiv>

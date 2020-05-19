@@ -38,6 +38,11 @@ const Chat = () => {
     const maxCharacters = 120;
     let characters = 0;
 
+    const scrollToBottom = () => {
+        const scrollerDiv = document.getElementById("scroller");
+        scrollerDiv.scrollTop = scrollerDiv.scrollHeight * 2;
+    }
+
     useEffect(() => {
         scrollToBottom();
     }, [message])
@@ -93,11 +98,6 @@ const Chat = () => {
             scrollToBottom();
         });
     }, [])
-
-    const scrollToBottom = () => {
-        const scrollerDiv = document.getElementById("scroller");
-        scrollerDiv.scrollTop = scrollerDiv.scrollHeight * 2;
-    }
 
     // roomsRef.child(`${roomID}`).child("chat").on('value', handleRecieveMessages);
 

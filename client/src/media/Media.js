@@ -3,6 +3,15 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import firebase from 'firebase';
 
+import { Icon } from 'react-icons-kit';
+import {xFeather} from 'react-icons-kit/feather/x'
+import {x} from 'react-icons-kit/oct/x'
+import {androidClose} from 'react-icons-kit/ionicons/androidClose'
+import {ic_close} from 'react-icons-kit/md/ic_close'
+import {ic_cancel} from 'react-icons-kit/md/ic_cancel'
+import {cross} from 'react-icons-kit/icomoon/cross'
+//queue icon and funcionality in chat box
+
 //---------------------------------- GAMES ----------------------------------
 
 import SnakeGame from './games/SnakeGame';
@@ -69,14 +78,12 @@ const Media = () => {
             });
     }, [])
 
-    // const handleRenderQueue = () => {
-        
-        
-    // }
-
-
     const handleRemoveMedia = () => {
         console.log('we done here');
+        let fileID = queueIDs[0];
+        console.log('fileID: ', fileID);
+        roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).remove();
+        //remove from storage
     }
 
     // roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`${theurl}`);
@@ -88,7 +95,32 @@ const Media = () => {
             {fileType !== 'image-file' ? null : 
             <StyledImage src={fileSrc}/>
             }
+
+            <MyButton onClick={handleRemoveMedia}>❌</MyButton>
             
+            {/* <MyButton>
+                <Icon icon={xFeather} />
+            </MyButton>
+
+            <MyButton>
+                <Icon icon={x} />
+            </MyButton>
+
+            <MyButton>
+                <Icon icon={androidClose} />
+            </MyButton>
+            
+            <MyButton>
+                <Icon icon={ic_close} />
+            </MyButton>
+
+            <MyButton>
+                <Icon icon={ic_cancel} />
+            </MyButton>
+
+            <MyButton>
+                <Icon icon={cross} />
+            </MyButton> */}
 
             {/* <video controls>
                 <source src={} type="video"></source>
@@ -122,6 +154,15 @@ const StyledImage = styled.img`
     width: 100%;
     height: 100%;
     object-fit: contain;
+`;
+
+const MyButton = styled.button`
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    color: #c4b1ab;
 `;
 
 export default Media;
