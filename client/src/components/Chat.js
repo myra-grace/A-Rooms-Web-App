@@ -38,6 +38,10 @@ const Chat = () => {
     const maxCharacters = 120;
     let characters = 0;
 
+    useEffect(() => {
+        scrollToBottom();
+    }, [message])
+
     const handleInput = (event) => {
         event.preventDefault();
         const userTyped = event.target.value;
@@ -61,8 +65,6 @@ const Chat = () => {
         }
     }
 
-    // const handleRecieveMessages = (event) => {
-
     const handleReceiveMessages = (message) => {
         setReceive(receive.concat(message));
     };
@@ -71,31 +73,31 @@ const Chat = () => {
         console.log('useEffect');
         let messages = {};
         let messageArray = [];
+        const chatLimiter = () => {
+            if (messageArray.length > 20) {
+                messageArray.shift();
+            }
+            //count how many messages in "chat"
+            //if >20, remove oldest(smallest #)
+            // roomsRef.child(`${roomID}`).child("chat").child(`smallest#`).remove(); WORKED FIX TO REMOVE THE 1ST OF 20
+            //else return
+            }
         roomsRef.child(`${roomID}`).child("chat").on('child_added', snapshot => {
-            
-            const chatLimiter = () => {
-                if (messageArray.length > 20) {
-                    messageArray.shift();
-                }
-                //count how many messages in "chat"
-                //if >20, remove oldest(smallest #)
-                // roomsRef.child(`${roomID}`).child("chat").child(`smallest#`).remove(); WORKED FIX TO REMOVE THE 1ST OF 20
-                //else return
-                }
-
             messages = snapshot.val();
             messageArray.push(messages);
             console.log('messageArray: ', messageArray.length);
             console.log('*****messageArray: ', messageArray); //WHY IS IT MAKING MULTIPLE COPIES(per how many messages there are)?
             console.log('*****RECIEVED*****');
-            // chatLimiter();
+            chatLimiter();
             handleReceiveMessages(messageArray);
+            scrollToBottom();
         });
     }, [])
-    
 
-    // }
-    
+    const scrollToBottom = () => {
+        const scrollerDiv = document.getElementById("scroller");
+        scrollerDiv.scrollTop = scrollerDiv.scrollHeight * 2;
+    }
 
     // roomsRef.child(`${roomID}`).child("chat").on('value', handleRecieveMessages);
 
@@ -109,7 +111,7 @@ const Chat = () => {
                 <StyledInput id="userInput" type="text" placeholder="Message" autocomplete="nope" value={message} onChange={handleInput}></StyledInput>
                 <StyledButton onClick={handleSubmit}><Icon style={{color: '#c4b1ab'}} size="20" icon={ic_send} /></StyledButton>
             </StyledForm>
-            <StyledDiv>
+            <StyledDiv id="scroller">
                 {receive.map((bubble, key) => {
                 return (
                     <div key={key} style={{display: "flex", flexDirection: "column-reverse", overflowAnchor: "auto", borderBottom: "1px solid transparent"}}>

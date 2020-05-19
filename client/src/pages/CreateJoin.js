@@ -62,9 +62,13 @@ const CreateJoin = () => {
             dispatch(receiveUserToRoom(userID));
             //check if room already exists
             roomsRef.child(`${room}`).child("userIDs").child(`${userID}`).set(username)
-        } else {
+        } 
+        if (selection === "Join") {
             //check if room already exists
             roomsRef.child(`${room}`).child("userIDs").child(`${userID}`).set(username)
+        }
+        if (room === undefined) {
+            return
         }
         history.push(`/room/${room}`);
     }
