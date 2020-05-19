@@ -25,57 +25,49 @@ const Media = () => {
     const roomsRef = database.ref('rooms');
     const roomID = useSelector(state => state.roomReducer.roomID);
     const userID = useSelector(state => state.userReducer.id);
-    const [fileType, setFileType] = useState('');
-    const [fileSrc, setFileSrc] = useState('');
+    const [itemsInQueueArray, setItemsInQueueArray] = useState([]);
+    const [queueIDs, setQueueIDs] = useState([]);
+
     //render queue item at first place in here
     //New component for selecting from queue?
     //object-fit: cover everything? No, fitinto
 
-    const itemsInQueueArray = [];
-    const queueIDs = [];
 
-    const handleFileType = () => {
-        if (itemsInQueueArray.length < 1 || itemsInQueueArray[0].length < 1) {
-            return
-        }
-        let file = itemsInQueueArray[0];
-        let fileKeys = Object.keys(file);
-        let fileValues = Object.values(file);
-        if (fileKeys.length !== 1 || fileValues.length < 1) {
-            return
-        }
-        let fileType = fileKeys[0];
-        let fileSource = fileValues[0];
-        console.log('fileSource: ', fileSource);
-        console.log('fileType: ', fileType);
-        setFileType(fileType);
-        setFileSrc(fileSource);
 
-        // let ID = Object.keys(file);
-        // let fileObject = Object.values(file);
-        // console.log('fileObject: ', fileObject);
-        // switch (key) {
-        //     case ('image-file'):
-        //         setFileType('image-file');
-        //         break;
-        
-        //     default:
-        //         break;
-        // }
+    const handleReceiveQueue = (item) => {
+        setItemsInQueueArray(itemsInQueueArray.concat(item));
+    }
+    const handleReceiveIDs = (id) => {
+        setQueueIDs(queueIDs.concat(id));
     }
 
     useEffect(() => {
+        const QueueArray = [];
+        const IDs = [];
         roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
             let queuedItem = {};
             queuedItem = snapshot.val();
-            itemsInQueueArray.push(queuedItem);
-            queueIDs.push(snapshot.key);
+            QueueArray.push(queuedItem);
+            IDs.push(snapshot.key);
+            // handleFileType();
+            handleReceiveQueue(QueueArray);
+            handleReceiveIDs(IDs);
+        });
+    }, [])
 
-            console.log('*****QUEUED*****');
-            console.log('itemsInQueueArray: ', itemsInQueueArray);
-            console.log('queueIDs: ', queueIDs);
-            handleFileType();
-            });
+    useEffect(() => {
+        const QueueArray = [];
+        const IDs = [];
+        roomsRef.child(`${roomID}`).child("queue").on('child_removed', snapshot => {
+            let queuedItem = {};
+            queuedItem = snapshot.val();
+            QueueArray.push(queuedItem);
+            IDs.push(snapshot.key);
+            // handleFileType();
+            handleReceiveQueue(QueueArray);
+            handleReceiveIDs(IDs);
+            debugger
+        });
     }, [])
 
     const handleRemoveMedia = () => {
@@ -92,9 +84,9 @@ const Media = () => {
 
     return (
         <Wrapper>
-            {fileType !== 'image-file' ? null : 
-            <StyledImage src={fileSrc}/>
-            }
+            <StyledImage src={itemsInQueueArray.length > 1 ?
+                itemsInQueueArray[0]["image-file"] : ""}/>
+            
 
             <MyButton onClick={handleRemoveMedia}>❌</MyButton>
             
