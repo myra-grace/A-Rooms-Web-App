@@ -14,6 +14,7 @@ const Share = () => {
     const [progress, setProgress] = useState(0);
     const [fileType, setFileType] = useState('');
     const roomID = useSelector(state => state.roomReducer.roomID);
+    const shareDiv = useSelector(state => state.userReducer.shareDiv)
     const dispatch = useDispatch();
 
     const handleImage = (event) => {
@@ -47,7 +48,8 @@ const Share = () => {
         if (fileType === '') {
             return
         }
-        const uploadTask = storage.ref(`rooms/${roomID}/${file.name}`).put(file)
+        const fileID = Date.now();
+        const uploadTask = storage.ref(`rooms/${roomID}/${fileID}`).put(file)
         uploadTask.on(
             "state_changed",
             snapshot => {
@@ -62,30 +64,31 @@ const Share = () => {
             () => {
                 storage.ref('rooms')
                 .child(`${roomID}`)
-                .child(`${file.name}`)
+                .child(`${fileID}`)
                 .getDownloadURL()
                 .then(theurl => {
-                    const fileID = Date.now();
                     roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`${theurl}`);
                     dispatch(addToSharedFiles(fileID));
                 });
             }
         )
         setFileType('');
-        dispatch(shareDivToggle());
+        dispatch(shareDivToggle(!shareDiv));
     }
 
     return (
         <Wrapper>
-            <button>Share Screen</button>
-            <button onClick={handleWeb}>Browse the web</button>
+            <ShareButton>Share Screen</ShareButton>
+            <StyledButton onClick={handleWeb}>Browse the web</StyledButton>
             <StyledForm>
                 <Styledprogress id="uploader" value={progress} max="100">{progress}</Styledprogress><br/>
-                <input type='file' style={{border: "2px solid black"}} onChange={fileUpload} /><br/>
-                <button onClick={handleImage}>Image</button>
-                <button onClick={handleVideo}>Video</button>
-                <button onClick={handleAudio}>Audio</button><br/>
-                <button onClick={handleUpload}>Submit</button>
+                <input type='file' style={{border: "2px solid white", borderRadius: "4px"}} onChange={fileUpload} />
+                <div style={{display: "flex", flexDirection: "row"}}>
+                    <StyledButton onClick={handleImage}>Image</StyledButton>
+                    <StyledButton onClick={handleVideo}>Video</StyledButton>
+                    <StyledButton onClick={handleAudio}>Audio</StyledButton>
+                </div>
+                <StyledButton onClick={handleUpload}>Submit</StyledButton>
             </StyledForm>
         </Wrapper>
     )
@@ -96,7 +99,6 @@ const Share = () => {
 const Wrapper = styled.div`
     width: 100%;
     height: 100%;
-    background-color: red;
 
     display: flex;
     flex-direction: column;
@@ -104,21 +106,38 @@ const Wrapper = styled.div`
     justify-content: center;
 `;
 
+const ShareButton = styled.button`
+    text-decoration: none;
+    color: white;
+    margin: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #a1395b;
+
+    :focus {
+        background-color: magenta;
+    }
+`;
+
 const StyledButton = styled.button`
     text-decoration: none;
     color: #a1395b;
-    font-size: 40px;
     margin: 10px;
+    padding: 5px 10px;
     border: none;
     border-radius: 4px;
     background-color: #c4b1ab;
-    width: 60%;
+
+    :focus {
+        background-color: magenta;
+        color: white;
+    }
 `;
 
 const StyledForm = styled.form`
     width: 60%;
     height: 60%;
-    background-color: blue;
 
     display: flex;
     flex-direction: column;
@@ -129,6 +148,7 @@ const StyledForm = styled.form`
 const Styledprogress = styled.progress`
     width: 60%;
     height: 10%;
+    z-index: 1;
 
     &::-webkit-appearance: meter;
 `;
