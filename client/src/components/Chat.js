@@ -30,6 +30,7 @@ const Chat = () => {
     const roomsRef = database.ref('rooms');
     const [message, setMessage] = useState('');
     const [receive, setReceive] = useState([]);
+    const [receiveID, setReceiveID] = useState([]);
     const username = useSelector(state => state.userReducer.username);
     const userID = useSelector(state => state.userReducer.id);
     const roomID = useSelector(state => state.roomReducer.roomID);
@@ -70,35 +71,48 @@ const Chat = () => {
         }
     }
 
+    // const handleReceiveMessagesIDs = (messageID) => {
+    //     setReceiveID(receiveID.concat(messageID));
+    // };
+
     const handleReceiveMessages = (message) => {
         setReceive(receive.concat(message));
     };
 
     useEffect(() => {
+        let MsgID = "";
         let messages = {};
+        let keyIDs = [];
         let messageArray = [];
+
         const chatLimiter = () => {
-            if (messageArray.length > 20) {
-                messageArray.shift();
-            }
-            //count how many messages in "chat"
-            //if >20, remove oldest(smallest #)
-            // roomsRef.child(`${roomID}`).child("chat").child(`smallest#`).remove(); WORKED FIX TO REMOVE THE 1ST OF 20
-            //else return
-            }
+            if (keyIDs.length < 20) return
+            //read info of messageArray.length -1 then take it to .remove() from db
+            roomsRef.child(`${roomID}`).child("chat").child(`${keyIDs[0]}`).remove()
+            keyIDs.shift();
+            messageArray.shift();
+        }
+
         roomsRef.child(`${roomID}`).child("chat").on('child_added', snapshot => {
             messages = snapshot.val();
+            MsgID = snapshot.key;
+            console.log('MsgID: ', MsgID);
+            console.log('messages: ', messages);
+            keyIDs.push(MsgID);
             messageArray.push(messages);
-            chatLimiter();
             handleReceiveMessages(messageArray);
+            // handleReceiveMessagesIDs(keyIDs)
             scrollToBottom();
+            console.log('keyIDs OUTSIDE: ', keyIDs);
+            console.log("***** Hi Dan! *****", keyIDs[0]);
+            chatLimiter();
         });
+        
+        // console.log('keyIDs OUTSIDE: ', keyIDs);
+        // console.log("***** Hi Dan! *****", keyIDs[0]); //HELP
     }, [])
 
-    // roomsRef.child(`${roomID}`).child("chat").on('value', handleRecieveMessages);
-
     // useKey("Enter", handleSubmit);
-    // handleRecieveMessages();
 
 
     return (

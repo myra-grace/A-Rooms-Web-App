@@ -54,8 +54,29 @@ const Telestrations = () => {
     // }, 10000);
 
 
+
+
+    // useEffect(() => {
+    //     const context = canvasRef.current.getContext('2d');
+    //     let coordinates = "";
+
+    //     //grab coordinates from db
+    //     coordinates = `const canvasCoor = () => {
+    //         ${stringFromDB}
+    //     }`
+    
+    //     eval(coordinates);
+    //     canvasCoor();
+
+    //     //have this called when exchange b/t players happens
+    // }, [])
+
+
+
         useEffect(() => {
             const context = canvasRef.current.getContext('2d');
+            let location = "";
+            let drawingCoordinates = [];
     
             const draw = (event) => {
                 console.log('draw');
@@ -69,9 +90,11 @@ const Telestrations = () => {
                 context.stroke();
                 context.beginPath();
                 context.moveTo(event.clientX - canvasRef.current.offsetLeft, event.clientY - canvasRef.current.offsetTop);
+                context.imageSmoothingQuality = "high";
     
-                console.log(`x: ${event.clientX - canvasRef.current.offsetLeft}, y: ${event.clientY - canvasRef.current.offsetTop}`);
-                //`lineTo[${event.clientX - canvasRef.current.offsetLeft}, event.clientY - canvasRef.current.offsetTop]`
+                // console.log(`x: ${event.clientX - canvasRef.current.offsetLeft}, y: ${event.clientY - canvasRef.current.offsetTop}`);
+                location = `lineTo[${event.clientX - canvasRef.current.offsetLeft}, ${event.clientY - canvasRef.current.offsetTop}]`;
+                drawingCoordinates.push(location);
             }
     
             const start = (event) => {
@@ -80,7 +103,8 @@ const Telestrations = () => {
                 drawing = true;
                 draw(event);
                 //push to array ->
-                //`moveTo[${event.clientX - canvasRef.current.offsetLeft}, ${event.clientY - canvasRef.current.offsetTop}]`
+                location = `moveTo[${event.clientX - canvasRef.current.offsetLeft}, ${event.clientY - canvasRef.current.offsetTop}]`;
+                drawingCoordinates.push(location);
             }
     
             const stop = (event) => {
@@ -88,30 +112,33 @@ const Telestrations = () => {
                 event.preventDefault();
                 drawing = false;
                 context.beginPath();
+                console.log(canvasRef.current.toDataURL());
             }
     
             if (clear === true) {
                 console.log('clearCanvas');
-                context.clearRect(0, 0, canvasRef.width, canvasRef.height);
+                context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
                 context.beginPath();
                 setClear(!clear);
-                debugger
             }
+        
     
             // if (exchange === true) {
                 canvasRef.current.onpointerdown = start;
                 canvasRef.current.onpointerup = stop;
                 canvasRef.current.onpointermove = draw;
             // }
+
+            console.log('drawingCoordinates: ', drawingCoordinates);
         }, [clear])
 
 
 
     return (
         <Wrapper>
-            {/* <div>
-                <button onClick={clearSwitch}>Clear</button>
-            </div> */}
+            <div style = {{margin: "10px"}}>
+                <button onClick={() => {setClear(true)}}>Clear</button>
+            </div>
 
             <canvas id="canvas" style={{border: "1px solid magenta"}}
                 ref={canvasRef}
@@ -138,6 +165,7 @@ const Wrapper = styled.div`
 
     display: flex;
     align-items: center;
+    flex-direction: column;
     justify-content: center;
 `;
 
