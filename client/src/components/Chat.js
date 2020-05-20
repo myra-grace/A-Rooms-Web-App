@@ -101,15 +101,9 @@ const Chat = () => {
             keyIDs.push(MsgID);
             messageArray.push(messages);
             handleReceiveMessages(messageArray);
-            // handleReceiveMessagesIDs(keyIDs)
             scrollToBottom();
-            console.log('keyIDs OUTSIDE: ', keyIDs);
-            console.log("***** Hi Dan! *****", keyIDs[0]);
             chatLimiter();
         });
-        
-        // console.log('keyIDs OUTSIDE: ', keyIDs);
-        // console.log("***** Hi Dan! *****", keyIDs[0]); //HELP
     }, [])
 
     // useKey("Enter", handleSubmit);
