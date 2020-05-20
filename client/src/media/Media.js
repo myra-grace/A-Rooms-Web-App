@@ -15,6 +15,7 @@ import {cross} from 'react-icons-kit/icomoon/cross'
 //---------------------------------- GAMES ----------------------------------
 
 import SnakeGame from './games/SnakeGame';
+import GameRenderer from '../components/GameRendered';
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -88,6 +89,10 @@ const Media = () => {
             <XButton onClick={handleRemoveMedia}>❌</XButton> : null
             }
 
+            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "game" ?
+                <GameRenderer /> : null
+            }
+            
             {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "image-file" ?
             <StyledImage src={itemsInQueueArray[0]["image-file"]}/> : null
             }

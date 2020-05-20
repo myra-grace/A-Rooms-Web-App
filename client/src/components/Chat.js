@@ -130,7 +130,6 @@ const Wrapper = styled.div`
     padding: 10px;
     display: flex;
     flex-direction: column-reverse;
-    // background-color: pink;
 `;
 
 const StyledForm = styled.form`
