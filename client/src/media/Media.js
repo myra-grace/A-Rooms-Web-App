@@ -20,71 +20,63 @@ import SnakeGame from './games/SnakeGame';
 //---------------------------------------------------------------------------
 
 const Media = () => {
+    const storage = firebase.storage();
+    const storageRoomsRef = storage.ref('rooms');
     const database = firebase.database();
     const usersRef = database.ref('users');
     const roomsRef = database.ref('rooms');
     const roomID = useSelector(state => state.roomReducer.roomID);
     const userID = useSelector(state => state.userReducer.id);
-    const [fileType, setFileType] = useState('');
-    const [fileSrc, setFileSrc] = useState('');
+    const [itemsInQueueArray, setItemsInQueueArray] = useState([]);
+    const [queueIDs, setQueueIDs] = useState([]);
+
     //render queue item at first place in here
     //New component for selecting from queue?
     //object-fit: cover everything? No, fitinto
 
-    const itemsInQueueArray = [];
-    const queueIDs = [];
 
-    const handleFileType = () => {
-        if (itemsInQueueArray.length < 1 || itemsInQueueArray[0].length < 1) {
-            return
-        }
-        let file = itemsInQueueArray[0];
-        let fileKeys = Object.keys(file);
-        let fileValues = Object.values(file);
-        if (fileKeys.length !== 1 || fileValues.length < 1) {
-            return
-        }
-        let fileType = fileKeys[0];
-        let fileSource = fileValues[0];
-        console.log('fileSource: ', fileSource);
-        console.log('fileType: ', fileType);
-        setFileType(fileType);
-        setFileSrc(fileSource);
-
-        // let ID = Object.keys(file);
-        // let fileObject = Object.values(file);
-        // console.log('fileObject: ', fileObject);
-        // switch (key) {
-        //     case ('image-file'):
-        //         setFileType('image-file');
-        //         break;
-        
-        //     default:
-        //         break;
-        // }
+    const handleReceiveQueue = (item) => {
+        setItemsInQueueArray(itemsInQueueArray.concat(item));
+    }
+    const handleReceiveIDs = (id) => {
+        setQueueIDs(queueIDs.concat(id));
     }
 
     useEffect(() => {
+        const QueueArray = [];
+        const IDs = [];
         roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
             let queuedItem = {};
             queuedItem = snapshot.val();
-            itemsInQueueArray.push(queuedItem);
-            queueIDs.push(snapshot.key);
-
-            console.log('*****QUEUED*****');
-            console.log('itemsInQueueArray: ', itemsInQueueArray);
-            console.log('queueIDs: ', queueIDs);
-            handleFileType();
-            });
+            QueueArray.push(queuedItem);
+            IDs.push(snapshot.key);
+            setItemsInQueueArray([]);
+            setQueueIDs([]);
+            handleReceiveQueue(QueueArray);
+            handleReceiveIDs(IDs);
+        });
     }, [])
 
+    
     const handleRemoveMedia = () => {
         console.log('we done here');
         let fileID = queueIDs[0];
         console.log('fileID: ', fileID);
-        roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).remove();
+        storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete();
+        roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).remove()
+        .then(() => {
+            let changedQueueIds = queueIDs.filter(id => {
+                return id !== fileID;
+            })
+            let changedItemsInQueue = itemsInQueueArray.filter(item => {
+                return itemsInQueueArray.indexOf(item) !== queueIDs.indexOf(fileID);
+            })
+            setItemsInQueueArray(changedItemsInQueue);
+            setQueueIDs(changedQueueIds);
+        })
         //remove from storage
     }
+
 
     // roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`${theurl}`);
 
@@ -92,35 +84,13 @@ const Media = () => {
 
     return (
         <Wrapper>
-            {fileType !== 'image-file' ? null : 
-            <StyledImage src={fileSrc}/>
+            {itemsInQueueArray.length > 1 ?
+            <XButton onClick={handleRemoveMedia}>❌</XButton> : null
             }
 
-            <MyButton onClick={handleRemoveMedia}>❌</MyButton>
-            
-            {/* <MyButton>
-                <Icon icon={xFeather} />
-            </MyButton>
-
-            <MyButton>
-                <Icon icon={x} />
-            </MyButton>
-
-            <MyButton>
-                <Icon icon={androidClose} />
-            </MyButton>
-            
-            <MyButton>
-                <Icon icon={ic_close} />
-            </MyButton>
-
-            <MyButton>
-                <Icon icon={ic_cancel} />
-            </MyButton>
-
-            <MyButton>
-                <Icon icon={cross} />
-            </MyButton> */}
+            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "image-file" ?
+            <StyledImage src={itemsInQueueArray[0]["image-file"]}/> : null
+            }
 
             {/* <video controls>
                 <source src={} type="video"></source>
@@ -135,6 +105,10 @@ const Media = () => {
                         Your browser does not support the <code>audio</code> element.
                 </audio>
             </figure> */}
+
+            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "word-game" ?
+            <p>MEDIA</p> : null
+            }
         </Wrapper>
     )
 };
@@ -156,13 +130,17 @@ const StyledImage = styled.img`
     object-fit: contain;
 `;
 
-const MyButton = styled.button`
+const XButton = styled.button`
     background-color: Transparent;
     background-repeat:no-repeat;
     border: none;
     cursor:pointer;
     overflow: hidden;
     color: #c4b1ab;
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    z-index: 1;
 `;
 
 export default Media;

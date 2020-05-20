@@ -62,7 +62,6 @@ const Room = () => {
     }
 
     const chatClick = () => {
-        console.log('chatClick');
         if (showChat === false) {
             setShowChat(true);
         } else {
@@ -70,24 +69,19 @@ const Room = () => {
         }
     }
 
-    const shareClick = () => {
-        //if share screen, change icon to x
-        console.log('screen share Click');
-        if (shareDiv === false) {
+    useEffect(() => {
+        if (shareDiv === true) {
             setShowShare(true);
         } else {
             setShowShare(false);
         }
-        // if (screenShareButton === ic_stop_screen_share) {
-        //     setScreenShareButton(ic_screen_share)
-        // } else {
-        //     setScreenShareButton(ic_stop_screen_share)
-        // }
+    }, [shareDiv])
+
+    const shareClick = () => {
         dispatch(shareDivToggle(!shareDiv))
     }
 
     const videoClick = () => {
-        console.log('videoClick');
         if (userVideo === false) {
             setVideoButton(video)
         } else {
@@ -101,7 +95,6 @@ const Room = () => {
     }
 
     const micClick = () => {
-        console.log('micCheck');
         if (userMic === false) {
             setMicButton(mic)
         } else {
@@ -115,17 +108,12 @@ const Room = () => {
     }
 
     const gamesClick = () => {
-        console.log('gamesClick');
         if (showGames === false) {
             setShowGames(true);
         } else {
             setShowGames(false);
         }
     }
-
-    // useEffect(() => {
-    //     console.log('USEEFFECT');
-    // }, [status])
 
 //HELP
     const removeUser = (event) => {
@@ -251,6 +239,7 @@ const QueueDiv = styled.div`
     // flex-grow: 1; 
     grid-area: 1 / 1 / 2 / 2; 
     background-color: orange;
+    z-index: 1;
 `;
 
 const ChatDiv = styled.div`
@@ -272,10 +261,10 @@ const GamesDiv = styled.div`
 `;
 
 const ShareDiv = styled.div`
-    border: 3px solid #d0ded8;
+    border: 3px solid #FFD5FF;
     border-radius: 0 20px 0;
-    box-shadow: 0 0 10px 5px #588b76;
-    background-color: #588b76;
+    box-shadow: 0 0 10px 5px magenta;
+    background-color: rgb(0, 0, 0, 0.7);
     width: 50%;
     height: 50%;
     position: absolute;

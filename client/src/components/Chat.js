@@ -75,7 +75,6 @@ const Chat = () => {
     };
 
     useEffect(() => {
-        console.log('useEffect');
         let messages = {};
         let messageArray = [];
         const chatLimiter = () => {
@@ -90,9 +89,6 @@ const Chat = () => {
         roomsRef.child(`${roomID}`).child("chat").on('child_added', snapshot => {
             messages = snapshot.val();
             messageArray.push(messages);
-            console.log('messageArray: ', messageArray.length);
-            console.log('*****messageArray: ', messageArray); //WHY IS IT MAKING MULTIPLE COPIES(per how many messages there are)?
-            console.log('*****RECIEVED*****');
             chatLimiter();
             handleReceiveMessages(messageArray);
             scrollToBottom();
@@ -111,15 +107,17 @@ const Chat = () => {
                 <StyledInput id="userInput" type="text" placeholder="Message" autocomplete="nope" value={message} onChange={handleInput}></StyledInput>
                 <StyledButton onClick={handleSubmit}><Icon style={{color: '#c4b1ab'}} size="20" icon={ic_send} /></StyledButton>
             </StyledForm>
+            <div style={{maxHeight: "95%"}}>
             <StyledDiv id="scroller">
                 {receive.map((bubble, key) => {
                 return (
-                    <div key={key} style={{display: "flex", flexDirection: "column-reverse", overflowAnchor: "auto", borderBottom: "1px solid transparent"}}>
+                    <div key={key} style={{display: "flex", flexDirection: "column", overflowAnchor: "auto", borderBottom: "1px solid transparent"}}>
                         <MessageBubble username={Object.keys(bubble)} message={Object.values(bubble)}/>
                     </div>
                 );
             })}
             </StyledDiv>
+            </div>
         </Wrapper>
     )
 };
