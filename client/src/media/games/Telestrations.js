@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import firebase from 'firebase';
-
-
 //------------------------------------------------------------
 
 //globalize this
@@ -28,48 +26,100 @@ const useKey = (key, cb) => {
     }, [key]);
 }
 
+//---------------------------------------------------------------------------------
 const Telestrations = () => {
     const database = firebase.database();
     const roomsRef = database.ref('rooms');
     const canvasRef = useRef();
+    const [roundSwitch, setRoundSwitch] = useState(false);
     const [divBgone, setDivBgone] = useState(false);
-    const [roundCounter, setRoundCounter] = useState(0);
     const [wordInput, setWordInput] = useState('');
     const [clear, setClear] = useState(false);
-    const [type, setType] = useState("word"); //CHANGE TO "word"
+    const [type, setType] = useState(""); 
     const [bookOwner, setBookOwner] = useState(null);
     const [toDraw, setToDraw] = useState("Give a word");
     const [toGuess, setToGuess] = useState("");
     const [playersArray, setPlayersArray] = useState([]);
-    const [gameplay, setGameplay] = useState(true); //change to false
+    const [gameplay, setGameplay] = useState(false); //change to false
     const [exchangeBook, setExchangeBook] = useState(false);
+    const username = useSelector(state => state.userReducer.username);
     const userID = useSelector(state => state.userReducer.id);
     const roomID = useSelector(state => state.roomReducer.roomID);
 
 
 //----------------------------------------------------------------------------------
 
-
-    roomsRef.child(`${roomID}`).child("game").child('playerIDs').set([0, 1]);
-
-    const addPlayer = () => {
-        console.log("Yes!");
-        roomsRef.child(`${roomID}`).child("game").child('playerIDs').child(`${userID}`).set([0]);
-        roomsRef.child(`${roomID}`).child("game").child('playerIDs').child("1").remove();
-        // setDivBgone(!divBgone);
-    }
-
-    const startGame = () => {
-        roomsRef.child(`${roomID}`).child("game").child('playerIDs').child("0").remove(); //ONLY WHEN GAME START
-        setClear(!clear);
-        // get array of playerIDs
-        setGameplay(true)
-    }
-
-    setTimeout(() => {
+    const handleReceivePlayerIDs = (id) => {
+        setPlayersArray(playersArray.concat(id));
         
-        // roomsRef.child(`${roomID}`).child("game").child('players').set(`${playersArray}`)
+    };
+
+    useEffect(() => {
+        let player = [];
+        setClear(!clear);
+        roomsRef.child(`${roomID}`).child("game").child('playerIDs').on('child_added', snapshot => {
+            player = snapshot.val();
+            handleReceivePlayerIDs(player)
+            console.log('player: ', player);
+        })
+    }, [])
+
+    // const stopTimeout = () => {
+    //     clearTimeout(playGame);
+    // }
+
+    const playGame = setTimeout(() => {
+        console.log("setTimeout");
+        console.log('playersArray: ', playersArray);
+        setGameplay(true)
+        // handleSubmit()
+        
+        if (type === "") {
+            setType("word");
+        } else if (type === "word") {
+            roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${wordInput}`);
+            setWordInput("");
+            console.log('Type: ', type);
+            setType("sketch");
+        } else {
+            handleInputToSend();
+            console.log('theInput: ', theInput);
+            roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${theInput}`)
+            setClear(!clear);
+            setType("word");
+        }
+        // setRoundSwitch(!roundSwitch)
     }, 10000);
+    
+
+    let theInput = "";
+    const handleInputToSend = () => {
+        theInput = canvasRef.current.toDataURL(); 
+    }
+
+    const handleSubmit = () => {
+        // event.preventDefault()
+        console.log("Submitted");
+        if (bookOwner === userID) {
+            console.log('FULL CIRCLE OF LIFE');
+            setGameplay(false);
+        } else if (bookOwner === null) {
+            setBookOwner(userID);
+        }
+
+        if (type === "word") {
+            roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${wordInput}`);
+            setWordInput("");
+            console.log('Type: ', type);
+        }
+
+        if (type === "sketch") {
+            handleInputToSend();
+            console.log('theInput: ', theInput);
+            roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${theInput}`)
+            setClear(!clear);
+        }
+    }
 
     // if (gameplay === false) return
 
@@ -78,21 +128,32 @@ const Telestrations = () => {
     // figure out why doesn't work w/ touch screen
 
 
+    let counter = 10;
+
+    const countdownFromTen = setInterval(() => {
+        // document.getElementById("timer").textContent = counter //HELP
+        counter--
+        if (counter === -1) {
+            counter = 10;
+        }
+    }, 1000); //HELP. MESSES UP AFTER INTERACTING WITH GAME seems like there are double and one's behind
+    
     // setInterval(() => {
-    //     //real-time countdown in corner
-    //     if (exchange === false) {
-    //         //if click spacebar do nothing
-    //         setExchange(true);
-    //         // exchange = true;
+    //     console.log("ZER0!");
+    // //     //real-time countdown in corner
+    // //     if (exchange === false) {
+    // //         //if click spacebar do nothing
+    // //         setExchange(true);
+    // //         // exchange = true;
 
-    //         console.log('word: ', word);
-    //         console.log('exchange: ', exchange);
-    //     }
+    // //         console.log('word: ', word);
+    // //         console.log('exchange: ', exchange);
+    // //     }
 
-    //     setWord('');
-    //     setExchange(false);
-    //     // exchange = false;
-    // }, 10000);
+    // //     setWord('');
+    // //     setExchange(false);
+    // //     // exchange = false;
+    // }, 11 * 1000);
 
 //------------------------------------- WORD -------------------------------------
     const maxCharacters = 15;
@@ -105,7 +166,6 @@ const Telestrations = () => {
         console.log('word: ', wordInput);
         //send word to db at end of interval
         //rooms/roomID/game/whosBookID/{userID:input} -> 
-        //  (input: word/drawing coordinates)
         // slideshow results (of everyone? but if >6 then only own) when done round then
         //destroy /game folder when end game
 
@@ -155,64 +215,28 @@ const Telestrations = () => {
             context.beginPath();
             setClear(!clear);
         }
-
-
-        let theInput = "";
-        const handleInputToSend = () => {
-            if (type === "word") {
-                theInput = wordInput
-            } else {
-                theInput = canvasRef.current.toDataURL(); 
-            }
-        }
-
-        const handleType = () => {
-            if (type === "word") {
-                setType("sketch")
-            } else {
-                setType("word")
-            }
-        }
-
-        const endGame = () => {
-            console.log('FULL CIRCLE OF LIFE');
-            setGameplay(false);
-        }
     
         const endRound = () => {
             // turn off listeners?
             // stop(); //necessary?
-            handleInputToSend();
             //when game is up to play, asks if wanna play (5 sec) -> yes puts ID into array of players
-            if (bookOwner === userID) {
-                endGame();
-            } else if (bookOwner === null) {
-                setBookOwner(userID);
-            }
             
-            roomsRef.child(`${roomID}`).child("game").child("rounds").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${theInput}`)
+            // roomsRef.child(`${roomID}`).child("game").child("rounds").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${theInput}`)
             
             console.log('MOVE RIGHT');
             //go right in players array and setBookOwner as that
             // then setRoundCounter(roundcounter += 1)
-            handleType();
-            setClear(!clear);
         }
 
-        document.getElementById("send").addEventListener('click', endRound) //CHANGE FOR TIMEOUT
+        // document.getElementById("send").addEventListener('click', endRound) //CHANGE FOR TIMEOUT
 
         if (type === "sketch") {
             canvasRef.current.onpointerdown = start;
             canvasRef.current.onpointerup = stop;
             canvasRef.current.onpointermove = draw;
         }
-    }, [clear])
+    }, [clear, type])
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
-        console.log("Submitted");
-        setWordInput("");
-    }
     useKey("Enter", handleSubmit);
 //------------------------------------- HTML -------------------------------------
 
@@ -223,7 +247,11 @@ const Telestrations = () => {
                 <>
                     <h1 style={{margin: "10px"}}>Want to play Telestrations?</h1>
                     <div style={{position: "absolute", zIndex: "1"}}>
-                        <StyledButton onClick={addPlayer}>Yes</StyledButton>
+                        <StyledButton onClick={() => {
+                                console.log("Yes!");
+                                roomsRef.child(`${roomID}`).child("game").child('playerIDs').push(`${userID}`);
+                                setDivBgone(!divBgone);
+                        }}>Yes</StyledButton>
                         <StyledButton onClick={() => {setDivBgone(true)}}>Nope</StyledButton>
                     </div>
                 </>
@@ -263,7 +291,8 @@ const Telestrations = () => {
                 height={`${CANVAS_SIZE[1]}px`}
             /> */}
 
-            <div style={{margin: "10px"}}>
+            <div style={{margin: "10px", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-around"}}>
+                <p id="timer" style={{width: "20px", height: "20px", alignItems: "center"}}>10</p>
                 <StyledButton onClick={() => {setClear(!clear)}}>Clear</StyledButton>
                 <button id="send">send</button>
             </div>
