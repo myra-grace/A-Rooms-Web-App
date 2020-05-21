@@ -75,7 +75,6 @@ const Media = () => {
             setItemsInQueueArray(changedItemsInQueue);
             setQueueIDs(changedQueueIds);
         })
-        //remove from storage
     }
 
 
@@ -90,7 +89,7 @@ const Media = () => {
             }
 
             {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "game" ?
-                <GameRenderer /> : null
+                <GameRenderer gameTitle={Object.values(itemsInQueueArray[0])[0]}/> : null
             }
             
             {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "image-file" ?

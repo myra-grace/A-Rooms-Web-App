@@ -20,6 +20,7 @@ import firebase from 'firebase';
 import {AppContext} from './AppContext';
 import Telestrations from '../media/games/Telestrations';
 
+
 //------------------------------------------------------------
 
 const App = () => {
@@ -55,6 +56,7 @@ const App = () => {
         <Route exact path="/room/:roomID" component={Room} />
         <Route exact path="/lobby" component={Lobby} />
         <Route exact path="/Telestrations" component={Telestrations} />
+
       </Switch>
     </Router>
     {/* <button onClick={signInWithGoogle}>Sign-In With Google</button> HELP */}

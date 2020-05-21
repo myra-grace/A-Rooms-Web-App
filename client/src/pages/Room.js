@@ -250,7 +250,6 @@ const ChatDiv = styled.div`
 const GamesDiv = styled.div`
     width: 30%;
     height: 95%;
-    background-color: blue;
     position: absolute;
     right: 0;
     bottom: 5%;

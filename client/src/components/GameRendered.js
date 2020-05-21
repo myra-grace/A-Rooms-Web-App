@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import SnakeGame from '../media/games/SnakeGame';
 import Telestrations from '../media/games/Telestrations';
+import firebase from 'firebase';
 
-const GameRenderer = () => {
+const GameRenderer = (props) => { //props passed down is 1 step behind when finally reloads
+    const database = firebase.database();
+    const roomsRef = database.ref('rooms');
+    // const game = useSelector(state => state.gameReducer.game);
     // retrieve game name from db rooms/roomID/queue[0]
     //in render, if this game, show it's component : null
+
+    let game = props.gameTitle;
+
     return (
         <Wrapper>
-            <p>GAME RENDERER COMPONENT</p>
+            {game == "Telestrations" ?
+            <Telestrations /> : null
+            }
+            {game == "Snake" ?
+            <SnakeGame /> : null
+            }
         </Wrapper>
     )
 };
@@ -18,7 +31,6 @@ const GameRenderer = () => {
 const Wrapper = styled.div`
     width: 100%;
     height: 100%;
-    background-color: orange;
 
     display: flex;
     align-items: center;
