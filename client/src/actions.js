@@ -1,7 +1,3 @@
-export const chatWindow = () => ({
-    type: 'CHAT_WINDOW',
-});
-
 //---------------------------------- USER ----------------------------------
 
 export const requestUserData = (id, user, video, mic) => ({
@@ -67,7 +63,7 @@ export const joinRoom = () => ({
 
 export const receiveRoomId = (roomID) => ({
     type: 'RECEIVE_ROOM_ID',
-    roomID: roomID
+    roomID,
 })
 
 export const addToSharedFiles = (sharedFile) => ({
@@ -77,7 +73,7 @@ export const addToSharedFiles = (sharedFile) => ({
 
 export const receiveUserToRoom = (user) => ({
     type: 'RECEIVE_USER_TO_ROOM',
-    user: user
+    user,
 })
 
 export const roomGameSelection = (game) => ({
@@ -102,4 +98,16 @@ export const receiveRoomData = (roomID) => ({
 
 export const receiveRoomDataError = () => ({
     type: 'RECEIVE_ROOM_DATA_ERROR',
+})
+//---------------------------------- GAME ----------------------------------
+
+export const gameName = (game) => ({
+    type: 'GAME_NAME',
+    game,
+})
+
+// TELESTRATIONS
+export const storeInputTele = (input) => ({
+    type: 'STORE_INPUT',
+    input,
 })
