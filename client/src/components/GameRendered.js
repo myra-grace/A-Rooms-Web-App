@@ -1,13 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import SnakeGame from '../media/games/SnakeGame';
+import Telestrations from '../media/games/Telestrations';
 
-const GamesSelector = () => {
-    // buttons for each game
-    //when clicked, send to db
-    // rooms/roomID/queue/Date.now()ID + is sent to Redux of who clicked/{game: gameName}
+const GameRenderer = () => {
+    // retrieve game name from db rooms/roomID/queue[0]
+    //in render, if this game, show it's component : null
     return (
         <Wrapper>
-            <p>GAME SELECTOR COMPONENT</p>
+            <p>GAME RENDERER COMPONENT</p>
         </Wrapper>
     )
 };
@@ -26,4 +27,4 @@ const Wrapper = styled.div`
     //overflow thing
 `;
 
-export default GamesSelector;
+export default GameRenderer;
