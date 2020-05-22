@@ -42,56 +42,50 @@ const Media = () => {
         if (itemsInQueueArray.includes(item)) return
         itemsInQueueArray.push(item);
         setItemsInQueueArray(itemsInQueueArray);
-        console.log('handleReceiveQueue itemsInQueueArray: ', itemsInQueueArray, "ITEM", item);
     }
     const handleReceiveIDs = (id) => {
         if (queueIDs.includes(id)) return
         queueIDs.push(id);
         setQueueIDs(queueIDs);
-        console.log('handleReceiveIDs queueIDs: ', queueIDs, 'ID', id);
     }
 
     useEffect(() => {
+        console.log('BEFORE itemsInQueueArray: ', itemsInQueueArray);
+        console.log('BEFORE queueIDs: ', queueIDs);
         roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
             let queuedItem = {};
             queuedItem = snapshot.val();
-            setItemsInQueueArray([]);
-            setQueueIDs([]);
+            // setItemsInQueueArray([]);
+            // setQueueIDs([]);
             handleReceiveQueue(queuedItem);
             handleReceiveIDs(snapshot.key);
             if (switchMe === false && !queueIDs.includes(snapshot.key)) {
                 // && !queueIDs.includes(snapshot.key)
                 setSwitchMe(true);
             }
+            console.log('itemsInQueueArray: ', itemsInQueueArray);
+            console.log('queueIDs: ', queueIDs);
         });
     }, [switchMe])
 
-    console.log("AFTER USE EFFECTitemsInQueueArray", itemsInQueueArray);
-    console.log("AFTER USE EFFECT queueIDs", queueIDs);
 
     const handleRemoveMedia = () => {
-        console.log("HANDLE itemsInQueueArray", itemsInQueueArray);
-        console.log("HANDLE queueIDs", queueIDs);
         console.log('we done here');
         let fileID = queueIDs[0];
-        console.log('fileID: ', fileID);
         storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete(); //FIX TO CHECK
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).remove()
         .then(() => {
             let changedQueueIds = queueIDs.filter(id => {
-                console.log('QQQQQQQQQQQqueueIDs: ', queueIDs);
-                console.log('id: ', id);
                 return id !== fileID;
             })
             let changedItemsInQueue = itemsInQueueArray.filter(item => {
                 return itemsInQueueArray.indexOf(item) !== queueIDs.indexOf(fileID);
             })
-            console.log('changedItemsInQueue: ', changedItemsInQueue);
             setItemsInQueueArray(changedItemsInQueue);
             // handleReceiveQueue(changedItemsInQueue);
             setQueueIDs(changedQueueIds);
             // handleReceiveIDs(changedQueueIds);
-            console.log('itemsInQueueArray: ', itemsInQueueArray);
+            console.log('REMOVE AFTER ** itemsInQueueArray: ', itemsInQueueArray);
             console.log('REMOVE AFTER ** queueIDs: ', queueIDs);
         })
         setSwitchMe(false);
