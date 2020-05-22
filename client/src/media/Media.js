@@ -28,6 +28,7 @@ const Media = () => {
     const roomsRef = database.ref('rooms');
     const roomID = useSelector(state => state.roomReducer.roomID);
     const userID = useSelector(state => state.userReducer.id);
+    const myQueuedIDs = useSelector(state => state.roomReducer.sharedFiles);
     const [itemsInQueueArray, setItemsInQueueArray] = useState([]);
     const [queueIDs, setQueueIDs] = useState([]);
     const [switchMe, setSwitchMe] = useState(false);
@@ -103,12 +104,12 @@ const Media = () => {
 
     return (
         <Wrapper>
-            {itemsInQueueArray.length > 1 ?
+            {itemsInQueueArray.length > 1 && queueIDs[0] === myQueuedIDs.includes(queueIDs[0]) ?
             <XButton onClick={handleRemoveMedia}>❌</XButton> : null
             }
 
             {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "game" ?
-                <GameRenderer gameTitle={Object.values(itemsInQueueArray[0])[0]}/> : null
+                <GameRenderer gameTitle={Object.values(itemsInQueueArray[0])[0]} currentMedia={queueIDs[0]} myQueuedIDs={myQueuedIDs}/> : null
             }
             
             {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "image-file" ?

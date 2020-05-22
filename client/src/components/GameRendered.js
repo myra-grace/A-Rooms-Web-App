@@ -17,10 +17,10 @@ const GameRenderer = (props) => { //props passed down is 1 step behind when fina
     return (
         <Wrapper>
             {game == "Telestrations" ?
-            <Telestrations /> : null
+            <Telestrations currentMedia={props.currentMedia} myQueuedIDs={props.myQueuedIDs}/> : null
             }
             {game == "Snake" ?
-            <SnakeGame /> : null
+            <SnakeGame currentMedia={props.currentMedia} myQueuedIDs={props.myQueuedIDs}/> : null
             }
         </Wrapper>
     )

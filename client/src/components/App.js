@@ -48,13 +48,12 @@ const App = () => {
     <>
     <Router>
       <GlobalStyles />
-      <StyledLink to="/lobby"><Icon icon={home} /></StyledLink>
+      <StyledLink to="/"><Icon icon={home} /></StyledLink>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/sign-in" component={SignIn} />
         <Route path="/create-join" component={CreateJoin} />
         <Route path="/room/:roomID" component={Room} />
-        <Route path="/lobby" component={Lobby} />
         <Route path="/Telestrations" component={Telestrations} />
 
       </Switch>

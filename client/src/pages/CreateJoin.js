@@ -48,7 +48,6 @@ const CreateJoin = () => {
         event.preventDefault();
         let room = event.target.value;
         setRoom(room);
-        //if creating -->
         dispatch(receiveRoomId(room));
     }
     
@@ -57,6 +56,9 @@ const CreateJoin = () => {
         dispatch(receiveRoomId(room));
         dispatch(receiveUserToRoom(userID));
         dispatch(joinRoom());
+        if (room === undefined) {
+            return
+        }
         if (selection === "Create") {
             dispatch(receiveRoomId(room));
             dispatch(receiveUserToRoom(userID));
@@ -66,9 +68,6 @@ const CreateJoin = () => {
         if (selection === "Join") {
             //check if room already exists
             roomsRef.child(`${room}`).child("userIDs").child(`${userID}`).set(username)
-        }
-        if (room === undefined) {
-            return
         }
         history.push(`/room/${room}`);
     }
