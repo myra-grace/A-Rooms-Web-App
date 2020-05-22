@@ -31,6 +31,8 @@ const Chat = () => {
     const [message, setMessage] = useState('');
     const [receive, setReceive] = useState([]);
     const [receiveID, setReceiveID] = useState([]);
+    const [switchScroller, setSwitchScroller] = useState(false);
+    const chatDiv = useSelector(state => state.userReducer.chatDiv);
     const username = useSelector(state => state.userReducer.username);
     const userID = useSelector(state => state.userReducer.id);
     const roomID = useSelector(state => state.roomReducer.roomID);
@@ -45,8 +47,11 @@ const Chat = () => {
     }
 
     useEffect(() => {
+        if (chatDiv === true){
+            setSwitchScroller(true)
+        }
         scrollToBottom();
-    }, [message])
+    }, [message, switchScroller])
 
     const handleInput = (event) => {
         event.preventDefault();
@@ -96,8 +101,6 @@ const Chat = () => {
         roomsRef.child(`${roomID}`).child("chat").on('child_added', snapshot => {
             messages = snapshot.val();
             MsgID = snapshot.key;
-            console.log('MsgID: ', MsgID);
-            console.log('messages: ', messages);
             keyIDs.push(MsgID);
             messageArray.push(messages);
             handleReceiveMessages(messageArray);

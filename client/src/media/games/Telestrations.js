@@ -157,7 +157,6 @@ const Telestrations = () => {
             {type === "sketch" ? 
                 <TeleDrawing /> : null
             }
-            <p style={{position: "absolute", left: "10%", top: "50%"}}>15</p>
         </Wrapper>
     )
 }

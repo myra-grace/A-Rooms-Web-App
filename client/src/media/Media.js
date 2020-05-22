@@ -39,36 +39,28 @@ const Media = () => {
 
     const handleReceiveQueue = (item) => {
         if (itemsInQueueArray.includes(item)) return
-        itemsInQueueArray.push(item)
-        setItemsInQueueArray(itemsInQueueArray); // FIX
+        itemsInQueueArray.push(item);
+        setItemsInQueueArray(itemsInQueueArray);
         console.log('handleReceiveQueue itemsInQueueArray: ', itemsInQueueArray, "ITEM", item);
     }
     const handleReceiveIDs = (id) => {
         if (queueIDs.includes(id)) return
-        queueIDs.push(id)
-        setQueueIDs(queueIDs);// FIX
+        queueIDs.push(id);
+        setQueueIDs(queueIDs);
         console.log('handleReceiveIDs queueIDs: ', queueIDs, 'ID', id);
     }
 
     useEffect(() => {
-        const QueueArray = [];
-        const IDs = [];
         roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
-            console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^snapshot: ', snapshot.val());
-            console.log('$$$$$$$$$$$$$$$$');
             let queuedItem = {};
             queuedItem = snapshot.val();
-            // QueueArray.push(queuedItem);
-            // IDs.push(snapshot.key);
             setItemsInQueueArray([]);
             setQueueIDs([]);
             handleReceiveQueue(queuedItem);
             handleReceiveIDs(snapshot.key);
             if (switchMe === false && !queueIDs.includes(snapshot.key)) {
-                console.log('snapshot.key: ', snapshot.key);
+                // && !queueIDs.includes(snapshot.key)
                 setSwitchMe(true);
-                console.log("SWITCH ME itemsInQueueArray", itemsInQueueArray);
-                console.log("SWITCH ME queueIDs", queueIDs);
             }
         });
     }, [switchMe])
@@ -82,18 +74,23 @@ const Media = () => {
         console.log('we done here');
         let fileID = queueIDs[0];
         console.log('fileID: ', fileID);
-        // storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete(); //FIX TO CHECK
+        storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete(); //FIX TO CHECK
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).remove()
         .then(() => {
             let changedQueueIds = queueIDs.filter(id => {
+                console.log('QQQQQQQQQQQqueueIDs: ', queueIDs);
+                console.log('id: ', id);
                 return id !== fileID;
             })
             let changedItemsInQueue = itemsInQueueArray.filter(item => {
                 return itemsInQueueArray.indexOf(item) !== queueIDs.indexOf(fileID);
             })
+            console.log('changedItemsInQueue: ', changedItemsInQueue);
             setItemsInQueueArray(changedItemsInQueue);
-            console.log('REMOVE BEFORE queueIDs: ', queueIDs);
+            // handleReceiveQueue(changedItemsInQueue);
             setQueueIDs(changedQueueIds);
+            // handleReceiveIDs(changedQueueIds);
+            console.log('itemsInQueueArray: ', itemsInQueueArray);
             console.log('REMOVE AFTER ** queueIDs: ', queueIDs);
         })
         setSwitchMe(false);

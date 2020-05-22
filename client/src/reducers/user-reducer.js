@@ -3,6 +3,7 @@ const initialState = {
     id: null,
     username: null,
     userAvatar: null,
+    chatDiv: false,
     shareDiv: false,
     video: false,
     mic: false,
@@ -58,6 +59,13 @@ const userReducer = (state = initialState, action) => {
             };
         }
 
+        case 'CHAT_DIV_TOGGLE': {
+            return {
+                ...state,
+                chatDiv: action.chatDiv
+            };
+        }
+
         case 'SHARE_DIV_TOGGLE': {
             return {
                 ...state,
@@ -76,6 +84,13 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 mic: action.mic
+            };
+        }
+
+        case 'GAMES_DIV_TOGGLE': {
+            return {
+                ...state,
+                gamesDiv: action.gamesDiv
             };
         }
 

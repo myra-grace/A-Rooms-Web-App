@@ -32,6 +32,11 @@ export const receiveUserAvatar = (userAvatar) => ({
     userAvatar
 })
 
+export const chatDivToggle = (chatDiv) => ({
+    type: 'CHAT_DIV_TOGGLE',
+    chatDiv
+})
+
 export const shareDivToggle = (shareDiv) => ({
     type: 'SHARE_DIV_TOGGLE',
     shareDiv
@@ -45,6 +50,11 @@ export const videoToggle = (video) => ({
 export const micToggle = (mic) => ({
     type: 'MIC_TOGGLE',
     mic
+})
+
+export const gamesDivToggle = (gamesDiv) => ({
+    type: 'GAMES_DIV_TOGGLE',
+    gamesDiv
 })
 
 export const receiveUserDataError = () => ({
