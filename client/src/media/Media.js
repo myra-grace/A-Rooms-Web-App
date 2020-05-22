@@ -30,6 +30,7 @@ const Media = () => {
     const userID = useSelector(state => state.userReducer.id);
     const [itemsInQueueArray, setItemsInQueueArray] = useState([]);
     const [queueIDs, setQueueIDs] = useState([]);
+    const [switchMe, setSwitchMe] = useState(false);
 
     //render queue item at first place in here
     //New component for selecting from queue?
@@ -37,44 +38,62 @@ const Media = () => {
 
 
     const handleReceiveQueue = (item) => {
-        setItemsInQueueArray(itemsInQueueArray.concat(item));
+        if (itemsInQueueArray.includes(item)) return
+        itemsInQueueArray.push(item);
+        setItemsInQueueArray(itemsInQueueArray);
+        console.log('handleReceiveQueue itemsInQueueArray: ', itemsInQueueArray, "ITEM", item);
     }
     const handleReceiveIDs = (id) => {
-        setQueueIDs(queueIDs.concat(id));
+        if (queueIDs.includes(id)) return
+        queueIDs.push(id);
+        setQueueIDs(queueIDs);
+        console.log('handleReceiveIDs queueIDs: ', queueIDs, 'ID', id);
     }
 
     useEffect(() => {
-        const QueueArray = [];
-        const IDs = [];
         roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
             let queuedItem = {};
             queuedItem = snapshot.val();
-            QueueArray.push(queuedItem);
-            IDs.push(snapshot.key);
             setItemsInQueueArray([]);
             setQueueIDs([]);
-            handleReceiveQueue(QueueArray);
-            handleReceiveIDs(IDs);
+            handleReceiveQueue(queuedItem);
+            handleReceiveIDs(snapshot.key);
+            if (switchMe === false && !queueIDs.includes(snapshot.key)) {
+                // && !queueIDs.includes(snapshot.key)
+                setSwitchMe(true);
+            }
         });
-    }, [])
+    }, [switchMe])
 
-    
+    console.log("AFTER USE EFFECTitemsInQueueArray", itemsInQueueArray);
+    console.log("AFTER USE EFFECT queueIDs", queueIDs);
+
     const handleRemoveMedia = () => {
+        console.log("HANDLE itemsInQueueArray", itemsInQueueArray);
+        console.log("HANDLE queueIDs", queueIDs);
         console.log('we done here');
         let fileID = queueIDs[0];
         console.log('fileID: ', fileID);
-        storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete();
+        storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete(); //FIX TO CHECK
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).remove()
         .then(() => {
             let changedQueueIds = queueIDs.filter(id => {
+                console.log('QQQQQQQQQQQqueueIDs: ', queueIDs);
+                console.log('id: ', id);
                 return id !== fileID;
             })
             let changedItemsInQueue = itemsInQueueArray.filter(item => {
                 return itemsInQueueArray.indexOf(item) !== queueIDs.indexOf(fileID);
             })
+            console.log('changedItemsInQueue: ', changedItemsInQueue);
             setItemsInQueueArray(changedItemsInQueue);
+            // handleReceiveQueue(changedItemsInQueue);
             setQueueIDs(changedQueueIds);
+            // handleReceiveIDs(changedQueueIds);
+            console.log('itemsInQueueArray: ', itemsInQueueArray);
+            console.log('REMOVE AFTER ** queueIDs: ', queueIDs);
         })
+        setSwitchMe(false);
     }
 
 

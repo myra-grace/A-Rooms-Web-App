@@ -10,9 +10,11 @@ import firebase from 'firebase';
 
 import { receiveUserData, 
     receiveUsername, 
+    chatDivToggle,
     shareDivToggle, 
     videoToggle, 
-    micToggle } from '../actions';
+    micToggle,
+gamesDivToggle } from '../actions';
 
 import { Icon } from 'react-icons-kit';
 import { messageSquare } from 'react-icons-kit/feather/messageSquare';
@@ -37,9 +39,11 @@ const Room = () => {
     const roomID = useSelector(state => state.roomReducer.roomID);
     const userID = useSelector(state => state.userReducer.id);
     const status = useSelector(state => state.userReducer.status)
+    const chatDiv = useSelector(state => state.userReducer.chatDiv)
     const userMic = useSelector(state => state.userReducer.mic)
     const userVideo = useSelector(state => state.userReducer.video)
     const shareDiv = useSelector(state => state.userReducer.shareDiv)
+    const gamesDiv = useSelector(state => state.userReducer.gamesDiv)
     const dispatch = useDispatch();
     const history = useHistory();
     
@@ -50,23 +54,22 @@ const Room = () => {
     const [videoButton, setVideoButton] = useState(videoOff)
     const [shareButton, setShareButton] = useState(share)
     const [micButton, setMicButton] = useState(micOff)
-    // const userVideo = user.video;
-    // console.log('userVideo: ', userVideo);
-    
-    //concider room ID
-    //if not signed in redirect to sign-in
-    //make sure state mic and video is false on leave?
+
 
     if (status !== "signed-in") {
         history.push(`/`);
     }
 
-    const chatClick = () => {
-        if (showChat === false) {
+    useEffect(() => {
+        if (chatDiv === true) {
             setShowChat(true);
         } else {
             setShowChat(false);
         }
+    }, [chatDiv])
+
+    const chatClick = () => {
+        dispatch(chatDivToggle(!chatDiv))
     }
 
     useEffect(() => {
@@ -107,12 +110,16 @@ const Room = () => {
         dispatch(micToggle(!userMic))
     }
 
-    const gamesClick = () => {
-        if (showGames === false) {
+    useEffect(() => {
+        if (gamesDiv === true) {
             setShowGames(true);
         } else {
             setShowGames(false);
         }
+    }, [gamesDiv])
+        
+    const gamesClick = () => {
+        dispatch(gamesDivToggle(!gamesDiv));
     }
 
 //HELP
@@ -123,6 +130,7 @@ const Room = () => {
 
     roomsRef.child(`${roomID}`).child("userIDs").child(`${userID}`).onDisconnect().remove();
 
+    
 
     return (
         <Wrapper>
@@ -207,7 +215,7 @@ const MyButton = styled.button`
 `;
 
 const ChatWrapper = styled.div`
-    width: 100%;
+    max-width: 75%;
     height: 95%;
     position: absolute;
     left: 0;
@@ -238,8 +246,13 @@ const ChatWrapper = styled.div`
 const QueueDiv = styled.div`
     // flex-grow: 1; 
     grid-area: 1 / 1 / 2 / 2; 
-    background-color: orange;
-    z-index: 1;
+    overflow-x: auto;
+    overflow-anchor: none;
+    
+    &::-webkit-scrollbar {
+        width: 0;
+        display: none;
+    }
 `;
 
 const ChatDiv = styled.div`

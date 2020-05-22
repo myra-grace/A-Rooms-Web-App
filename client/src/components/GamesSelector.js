@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { gameName, addToSharedFiles } from '../actions';
+import { gamesDivToggle, gameName, addToSharedFiles } from '../actions';
 import firebase from 'firebase';
 
 const GamesSelector = () => {
@@ -11,6 +11,7 @@ const GamesSelector = () => {
     const [gameTitle, setGameTitle] = useState('');
     const roomID = useSelector(state => state.roomReducer.roomID);
     const shareDiv = useSelector(state => state.userReducer.shareDiv)
+    const gamesDiv = useSelector(state => state.userReducer.gamesDiv)
     const dispatch = useDispatch();
 
 
@@ -21,6 +22,7 @@ const GamesSelector = () => {
         dispatch(gameName("Telestrations"))
         dispatch(addToSharedFiles(fileID));
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`Telestrations`);
+        dispatch(gamesDivToggle(!gamesDiv));
     }
 
     const handleSnake = (event) => {
@@ -28,6 +30,7 @@ const GamesSelector = () => {
         dispatch(gameName("Snake"))
         dispatch(addToSharedFiles(fileID));
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`Snake`);
+        dispatch(gamesDivToggle(!gamesDiv));
     }
 
 
@@ -72,6 +75,7 @@ const StyledImg = styled.img`
     width: 40px;
     height: 40px;
     object-fit: cover;
+    background-image : linear-gradient(0deg, rgba(63,171,251,1) 0%, rgba(198,70,252,1) 90%);
 `;
 
 export default GamesSelector;
