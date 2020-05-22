@@ -26,8 +26,12 @@ import Telestrations from '../media/games/Telestrations';
 const App = () => {
   const database = firebase.database();
   const usersRef = database.ref('users');
+  const roomsRef = database.ref('rooms');
   const storage = firebase.storage();
+  const storageRoomsRef = storage.ref('rooms');
   const userID = useSelector(state => state.userReducer.id);
+  const roomID = useSelector(state => state.roomReducer.roomID);
+  const myQueuedIDs = useSelector(state => state.roomReducer.sharedFiles);
   // const { signInWithGoogle } = useContext(AppContext); HELP
 
   //----------------- DATA BASE -----------------
@@ -39,7 +43,12 @@ const App = () => {
   //     userDB.innerText = JSON.stringify(snap.val(), null, 3);
   // });
 
-  
+  window.addEventListener("unload", () => {
+    myQueuedIDs.forEach(id => {
+      roomsRef.child(`${roomID}`).child("queue").child(`${id}`).onDisconnect().remove();
+      storageRoomsRef.child(`${roomID}`).child(`${id}`).delete(); //FIX
+    });
+  })
 
   usersRef.child(`${userID}`).onDisconnect().remove();
 
