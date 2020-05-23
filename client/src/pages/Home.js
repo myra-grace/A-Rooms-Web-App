@@ -84,10 +84,10 @@ const Wrapper = styled.div`
 `;
 
 const StyledDiv = styled.div`
-    border: 3px solid #d0ded8;
+    border: 3px solid #D1BAFF;
     border-radius: 50%;
     box-shadow: 0 0 10px 10px #588b76;
-    background-color: #588b76;
+    background-image : linear-gradient(0deg, rgba(63,171,251,1) 0%, rgba(198,70,252,1) 90%);
 
     width: 500px;
     height: 500px;
@@ -100,11 +100,12 @@ const StyledDiv = styled.div`
 
 const MyButton = styled.button`
     text-decoration: none;
-    color: #a1395b;
+    color: #1e2329;
     font-size: 40px;
     margin: 10px;
     border: none;
     border-radius: 4px;
+    box-shadow: 0 0 20px 5px #1e2329;
     background-color: #c4b1ab;
     width: 60%;
 `

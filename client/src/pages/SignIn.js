@@ -45,8 +45,6 @@ const SignIn = () => {
 
     const handleInput = (event) => {
         event.preventDefault();
-        //assign random avatar
-        //limit character length
         const userTyped = event.target.value;
         characters = userTyped.length
         if (characters > maxCharacters) {
@@ -91,13 +89,11 @@ const SignIn = () => {
     return (
         <Wrapper>
             <StyledDiv>
-                <Avatar id="avatarpholder" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973461_960_720.png" /><br/>
                 <StyledForm>
                     <StyledInput id="userInput" type="text" placeholder="One time use username" tabindex="1" value={input} onChange={handleInput}></StyledInput><br/>
                     {/* <StyledInput type="file" onChange={handleAvatarInput}></StyledInput> */}
                     <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
                 </StyledForm>
-                <StyledP>Sign-in with Google</StyledP>
             </StyledDiv>
         </Wrapper>
         
@@ -117,13 +113,13 @@ const Wrapper = styled.div`
 
 const StyledDiv = styled.div`
     text-align: center;
-    border: 3px solid #d0ded8;
-    border-radius: 8px;
-    box-shadow: 0 0 10px 5px #588b76;
-    background-color: #588b76;
+    border: 3px solid #E0CAFF;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 10px #588b76;
+    background-image : linear-gradient(0deg, rgba(63,171,251,1) 0%, rgba(198,70,252,1) 90%);
 
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 500px;
 
     display: flex;
     flex-direction: column;

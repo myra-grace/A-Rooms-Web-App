@@ -89,18 +89,35 @@ const CreateJoin = () => {
 //---------------------------------- STYLES ----------------------------------
 
 const Wrapper = styled.div`
-    border: 3px solid #d0ded8;
+    border: 3px solid #E0CAFF;
     border-radius: 50%;
     box-shadow: 0 0 10px 10px #588b76;
-    background-color: #588b76;
-
-    width: 500px;
-    height: 500px;
+    background-image : linear-gradient(0deg, rgba(63,171,251,1) 0%, rgba(198,70,252,1) 90%);
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    @media (max-width: 1200px) {
+        width: 500px;
+        height: 500px;
+    }
+
+    @media (max-width: 1000px) {
+        width: 450px;
+        height: 450px;
+    }
+
+    @media (max-width: 800px) {
+        width: 300px;
+        height: 300px;
+    }
+
+    @media (max-width: 600px) {
+        width: 200px;
+        height: 200px;
+    }
 `;
 
 const StyledForm = styled.form`

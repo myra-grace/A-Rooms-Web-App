@@ -57,7 +57,6 @@ const Telestrations = (props) => {
             console.log(gameplay);
             handleReceivePlayer(player);
             if (switchUp === false && !playersArray.includes(snapshot.key)) {
-                // && !queueIDs.includes(snapshot.key)
                 setSwitchUp(true);
             }
         })
@@ -132,6 +131,7 @@ const Telestrations = (props) => {
                 {gameplay || !divBgone ? null :
                 <div style={{zIndex: "1", position: "absolute"}}>
                     <StyledButton onClick={() => {
+                        console.log('myQueuedIDs: ', props.myQueuedIDs);
                         if (props.currentMedia !== props.myQueuedIDs.includes(props.currentMedia)) return
                         //check if person who put in queue is you, then -->
                         setGameplay(true); //DOESN'T WORK

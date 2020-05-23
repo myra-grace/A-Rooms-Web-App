@@ -55,12 +55,9 @@ const Media = () => {
         roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
             let queuedItem = {};
             queuedItem = snapshot.val();
-            // setItemsInQueueArray([]);
-            // setQueueIDs([]);
             handleReceiveQueue(queuedItem);
             handleReceiveIDs(snapshot.key);
             if (switchMe === false && !queueIDs.includes(snapshot.key)) {
-                // && !queueIDs.includes(snapshot.key)
                 setSwitchMe(true);
             }
             console.log('itemsInQueueArray: ', itemsInQueueArray);
@@ -72,7 +69,7 @@ const Media = () => {
     const handleRemoveMedia = () => {
         console.log('we done here');
         let fileID = queueIDs[0];
-        storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete(); //FIX TO CHECK
+        storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete();
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).remove()
         .then(() => {
             let changedQueueIds = queueIDs.filter(id => {

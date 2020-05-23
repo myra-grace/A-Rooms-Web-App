@@ -43,12 +43,13 @@ const App = () => {
   //     userDB.innerText = JSON.stringify(snap.val(), null, 3);
   // });
 
-  window.addEventListener("unload", () => {
-    myQueuedIDs.forEach(id => {
-      roomsRef.child(`${roomID}`).child("queue").child(`${id}`).onDisconnect().remove();
-      storageRoomsRef.child(`${roomID}`).child(`${id}`).delete(); //FIX
+
+  myQueuedIDs.forEach(id => {
+    roomsRef.child(`${roomID}`).child("queue").child(`${id}`).onDisconnect().remove().then(() => {
+      // storageRoomsRef.child(`${roomID}`).child(`${id}`).delete(); //HELP
     });
-  })
+  });
+
 
   usersRef.child(`${userID}`).onDisconnect().remove();
 

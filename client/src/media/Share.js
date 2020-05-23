@@ -10,6 +10,7 @@ const Share = () => {
     const usersRef = database.ref('users');
     const roomsRef = database.ref('rooms');
     const storage = firebase.storage();
+    const [showDiv, setShowDiv] = useState(false);
     const [file, setFile] = useState(null);
     const [progress, setProgress] = useState(0);
     const [fileType, setFileType] = useState('');
@@ -20,21 +21,25 @@ const Share = () => {
     const handleImage = (event) => {
         event.preventDefault();
         setFileType('image-file');
+        setShowDiv(true);
     }
 
     const handleAudio = (event) => {
         event.preventDefault();
         setFileType('audio-file');
+        setShowDiv(true);
     }
 
     const handleVideo = (event) => {
         event.preventDefault();
         setFileType('video-file');
+        setShowDiv(true);
     }
 
     const handleWeb = (event) => {
         event.preventDefault();
         setFileType('web');
+        setShowDiv(true);
     }
 
     const fileUpload = (event) => {
@@ -78,17 +83,21 @@ const Share = () => {
 
     return (
         <Wrapper>
-            <ShareButton>Share Screen</ShareButton>
-            <StyledButton onClick={handleWeb}>Browse the web</StyledButton>
+            <h2>Add To Queue</h2>
             <StyledForm>
-                <Styledprogress id="uploader" value={progress} max="100">{progress}</Styledprogress><br/>
-                <input type='file' style={{border: "2px solid white", borderRadius: "4px"}} onChange={fileUpload} />
+                {!showDiv ? null :
+                <div style={{display: "block", justifyContent: "center"}}>
+                    <Styledprogress id="uploader" value={progress} max="100">{progress}</Styledprogress><br/>
+                    <input type='file' onChange={fileUpload} />
+                    <SubmitButton onClick={handleUpload}>Submit</SubmitButton>
+                </div>
+                }
+                {showDiv ? null :
                 <div style={{display: "flex", flexDirection: "row"}}>
                     <StyledButton onClick={handleImage}>Image</StyledButton>
-                    <StyledButton onClick={handleVideo}>Video</StyledButton>
                     <StyledButton onClick={handleAudio}>Audio</StyledButton>
                 </div>
-                <StyledButton onClick={handleUpload}>Submit</StyledButton>
+                }
             </StyledForm>
         </Wrapper>
     )
@@ -106,7 +115,7 @@ const Wrapper = styled.div`
     justify-content: center;
 `;
 
-const ShareButton = styled.button`
+const SubmitButton = styled.button`
     text-decoration: none;
     color: white;
     margin: 10px;
