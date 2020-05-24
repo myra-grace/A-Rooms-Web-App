@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import firebase from 'firebase';
@@ -17,6 +17,7 @@ const Share = () => {
     const roomID = useSelector(state => state.roomReducer.roomID);
     const shareDiv = useSelector(state => state.userReducer.shareDiv)
     const dispatch = useDispatch();
+    const fileName = useRef;
 
     const handleImage = (event) => {
         event.preventDefault();
@@ -88,7 +89,8 @@ const Share = () => {
                 {!showDiv ? null :
                 <div style={{display: "block", justifyContent: "center"}}>
                     <Styledprogress id="uploader" value={progress} max="100">{progress}</Styledprogress><br/>
-                    <input type='file' onChange={fileUpload} />
+                    <p>{fileName}</p>
+                    <input ref={fileName} type='file' onChange={fileUpload} />
                     <SubmitButton onClick={handleUpload}>Submit</SubmitButton>
                 </div>
                 }
