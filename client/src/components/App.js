@@ -68,7 +68,7 @@ const App = () => {
 
       </Switch>
     </Router>
-    {/* <button onClick={signInWithGoogle}>Sign-In With Google</button> HELP */}
+    {/* <button onClick={signInWithGoogle}>Sign-In With Google</button> */}
     </>
   )
 };

@@ -27,10 +27,12 @@ const TeleDrawing = () => {
             context.strokeStyle = '#D6EAFF';
             context.shadowColor = 'dodgerblue';
             context.shadowBlur = 20;
-            context.lineTo(event.clientX - canvasRef.current.offsetLeft, event.clientY - canvasRef.current.offsetTop);
+            context.lineTo(event.offsetX, event.offsetY);
+            console.log('event.clientY: ', event.clientY);
+            console.log('event.clientX: ', event.clientX);
             context.stroke();
             context.beginPath();
-            context.moveTo(event.clientX - canvasRef.current.offsetLeft, event.clientY - canvasRef.current.offsetTop);
+            context.moveTo(event.offsetX, event.offsetY);
             context.imageSmoothingQuality = "high";
         }
 
@@ -56,20 +58,6 @@ const TeleDrawing = () => {
             context.beginPath();
             setClear(!clear);
         }
-    
-        const endRound = () => {
-            // turn off listeners?
-            // stop(); //necessary?
-            //when game is up to play, asks if wanna play (5 sec) -> yes puts ID into array of players
-            
-            // roomsRef.child(`${roomID}`).child("game").child("rounds").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${theInput}`)
-            
-            console.log('MOVE RIGHT');
-            //go right in players array and setBookOwner as that
-            // then setRoundCounter(roundcounter += 1)
-        }
-
-        // document.getElementById("send").addEventListener('click', endRound) //CHANGE FOR TIMEOUT
 
         canvasRef.current.onpointerdown = start;
         canvasRef.current.onpointerup = stop;

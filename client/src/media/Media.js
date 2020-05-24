@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import firebase from 'firebase';
+
 
 import { Icon } from 'react-icons-kit';
 import {xFeather} from 'react-icons-kit/feather/x'
@@ -12,15 +13,13 @@ import {ic_cancel} from 'react-icons-kit/md/ic_cancel'
 import {cross} from 'react-icons-kit/icomoon/cross'
 //queue icon and funcionality in chat box
 
-//---------------------------------- GAMES ----------------------------------
-
-import SnakeGame from './games/SnakeGame';
 import GameRenderer from '../components/GameRendered';
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
 
 const Media = () => {
+    let mediaContainerRef = useRef();
     const storage = firebase.storage();
     const storageRoomsRef = storage.ref('rooms');
     const database = firebase.database();
@@ -28,14 +27,12 @@ const Media = () => {
     const roomsRef = database.ref('rooms');
     const roomID = useSelector(state => state.roomReducer.roomID);
     const userID = useSelector(state => state.userReducer.id);
-    const myQueuedIDs = useSelector(state => state.roomReducer.sharedFiles);
+    const sharedFiles = useSelector(state => state.roomReducer.sharedFiles);
+    const [myQueuedIDs, setMyQueuedIDs] = useState([]);
     const [itemsInQueueArray, setItemsInQueueArray] = useState([]);
     const [queueIDs, setQueueIDs] = useState([]);
     const [switchMe, setSwitchMe] = useState(false);
-
-    //render queue item at first place in here
-    //New component for selecting from queue?
-    //object-fit: cover everything? No, fitinto
+    const [title, setTitle] = useState("");
 
 
     const handleReceiveQueue = (item) => {
@@ -47,23 +44,24 @@ const Media = () => {
         if (queueIDs.includes(id)) return
         queueIDs.push(id);
         setQueueIDs(queueIDs);
+        console.log('queueIDs: ', queueIDs[0]);
+        console.log("myQueuedIDs", myQueuedIDs);
+        console.log('sharedFiles: ', sharedFiles);
+        console.log('queueArr: ', queueArr);
     }
 
+
     useEffect(() => {
-        console.log('BEFORE itemsInQueueArray: ', itemsInQueueArray);
-        console.log('BEFORE queueIDs: ', queueIDs);
         roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
             let queuedItem = {};
             queuedItem = snapshot.val();
             handleReceiveQueue(queuedItem);
             handleReceiveIDs(snapshot.key);
-            if (switchMe === false && !queueIDs.includes(snapshot.key)) {
+            if (switchMe === false) {
                 setSwitchMe(true);
             }
-            console.log('itemsInQueueArray: ', itemsInQueueArray);
-            console.log('queueIDs: ', queueIDs);
         });
-    }, [switchMe])
+    }, [switchMe, sharedFiles])
 
 
     const handleRemoveMedia = () => {
@@ -79,50 +77,50 @@ const Media = () => {
                 return itemsInQueueArray.indexOf(item) !== queueIDs.indexOf(fileID);
             })
             setItemsInQueueArray(changedItemsInQueue);
-            // handleReceiveQueue(changedItemsInQueue);
             setQueueIDs(changedQueueIds);
-            // handleReceiveIDs(changedQueueIds);
-            console.log('REMOVE AFTER ** itemsInQueueArray: ', itemsInQueueArray);
-            console.log('REMOVE AFTER ** queueIDs: ', queueIDs);
         })
         setSwitchMe(false);
     }
 
+    let queueArr = [];
+    useEffect(() => {
+        queueArr = sharedFiles ? sharedFiles : [];
+        setMyQueuedIDs(queueArr)
+        console.log('USE EFFECT queueArr: ', queueArr);
+        console.log('USE EFFECT myQueuedIDs: ', myQueuedIDs);
+        console.log('USE EFFECT sharedFiles: ', sharedFiles);
+        // if (sharedFiles.length >= 0) {
+        //     setSwitcheroo(true);
+        // }
+    }, [sharedFiles])
 
-    // roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`${theurl}`);
+    // console.log("**LEFT**", mediaContainerRef.current.offsetLeft);
+    // console.log("**TOP**", mediaContainerRef.current.offsetTop);
 
-    // roomsRef.child(`${roomID}`).child("queue").on('value', handleRenderQueue);
-
+    console.log('sharedFiles: ', sharedFiles);
+    console.log('queueIDs: ', queueIDs);
     return (
-        <Wrapper>
-            {itemsInQueueArray.length > 1 && queueIDs[0] === myQueuedIDs.includes(queueIDs[0]) ?
+        <Wrapper ref={mediaContainerRef}>
+            {itemsInQueueArray.length > 1 && sharedFiles.includes(queueIDs[0]) ?
             <XButton onClick={handleRemoveMedia}>❌</XButton> : null
             }
 
             {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "game" ?
-                <GameRenderer gameTitle={Object.values(itemsInQueueArray[0])[0]} currentMedia={queueIDs[0]} myQueuedIDs={myQueuedIDs}/> : null
+                <GameRenderer gameTitle={Object.values(itemsInQueueArray[0])[0]} currentMedia={queueIDs[0]} sharedFiles={sharedFiles} mediaContainerRefLeft={mediaContainerRef.offsetLeft} mediaContainerRefTop={mediaContainerRef.offsetTop}/> : null
             }
             
-            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "image-file" ?
-            <StyledImage src={itemsInQueueArray[0]["image-file"]}/> : null
+            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "image" ?
+            <StyledImage src={itemsInQueueArray[0]["image"]}/> : null
             }
 
-            {/* <video controls>
-                <source src={} type="video"></source>
-                Your browser does not support this file
-            </video>
-
+            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "audio" ?
             <figure>
                 <figcaption>{title}</figcaption>
-                <audio
-                    controls
-                    src={}>
+                <audio controls preload="auto">
+                    <source src={itemsInQueueArray[0]["audio"]} />
                         Your browser does not support the <code>audio</code> element.
                 </audio>
-            </figure> */}
-
-            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "word-game" ?
-            <p>MEDIA</p> : null
+            </figure> : null
             }
         </Wrapper>
     )

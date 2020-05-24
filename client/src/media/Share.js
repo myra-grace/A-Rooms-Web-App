@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import firebase from 'firebase';
 import { shareDivToggle, addToSharedFiles } from '../actions';
+import { GeneralWrapper } from '../components/GlobalStyles';
 
 
 const Share = () => {
@@ -17,23 +18,22 @@ const Share = () => {
     const roomID = useSelector(state => state.roomReducer.roomID);
     const shareDiv = useSelector(state => state.userReducer.shareDiv)
     const dispatch = useDispatch();
-    const fileName = useRef;
 
     const handleImage = (event) => {
         event.preventDefault();
-        setFileType('image-file');
+        setFileType('image');
         setShowDiv(true);
     }
 
     const handleAudio = (event) => {
         event.preventDefault();
-        setFileType('audio-file');
+        setFileType('audio');
         setShowDiv(true);
     }
 
     const handleVideo = (event) => {
         event.preventDefault();
-        setFileType('video-file');
+        setFileType('video');
         setShowDiv(true);
     }
 
@@ -74,7 +74,7 @@ const Share = () => {
                 .getDownloadURL()
                 .then(theurl => {
                     roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`${theurl}`);
-                    dispatch(addToSharedFiles(fileID));
+                    dispatch(addToSharedFiles(fileID.toString()));
                 });
             }
         )
@@ -83,14 +83,13 @@ const Share = () => {
     }
 
     return (
-        <Wrapper>
+        <GeneralWrapper style={{flexDirection: "column"}}>
             <h2>Add To Queue</h2>
             <StyledForm>
                 {!showDiv ? null :
                 <div style={{display: "block", justifyContent: "center"}}>
                     <Styledprogress id="uploader" value={progress} max="100">{progress}</Styledprogress><br/>
-                    <p>{fileName}</p>
-                    <input ref={fileName} type='file' onChange={fileUpload} />
+                    <input type='file' onChange={fileUpload} />
                     <SubmitButton onClick={handleUpload}>Submit</SubmitButton>
                 </div>
                 }
@@ -101,21 +100,11 @@ const Share = () => {
                 </div>
                 }
             </StyledForm>
-        </Wrapper>
+        </GeneralWrapper>
     )
 }
 
 //---------------------------------- STYLES ----------------------------------
-
-const Wrapper = styled.div`
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-`;
 
 const SubmitButton = styled.button`
     text-decoration: none;

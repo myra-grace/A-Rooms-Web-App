@@ -8,6 +8,7 @@ import {logIn} from 'react-icons-kit/feather/logIn';
 import firebase from 'firebase';
 import { receiveRoomId, receiveUserToRoom } from '../actions';
 import SignIn from "./SignIn";
+import { CircleWrapper } from '../components/GlobalStyles';
 
 
 const useKey = (key, cb) => {
@@ -77,31 +78,16 @@ const CreateJoin = () => {
     const placeholderString = `${selection}: room ID`
 
     return (
-        <Wrapper>
+        <CircleWrapper>
             <StyledForm>
                 <StyledInput id="roomInput" type="text" placeholder={placeholderString} tabindex="1" value={room} onChange={handleInput}></StyledInput>
                 <SubmitButton type="submit" onClick={handleSubmit}><Icon icon={logIn} /></SubmitButton>
             </StyledForm>
-        </Wrapper>
+        </CircleWrapper>
     )
 };
 
 //---------------------------------- STYLES ----------------------------------
-
-const Wrapper = styled.div`
-    border: 3px solid #E0CAFF;
-    border-radius: 50%;
-    box-shadow: 0 0 10px 10px #588b76;
-    background-image : linear-gradient(0deg, rgba(63,171,251,1) 0%, rgba(198,70,252,1) 90%);
-
-    width: 500px;
-    height: 500px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-`;
 
 const StyledForm = styled.form`
     text-align: center;

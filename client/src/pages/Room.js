@@ -7,6 +7,7 @@ import Chat from '../components/Chat';
 import GamesSelector from '../components/GamesSelector';
 import Share from '../media/Share';
 import firebase from 'firebase';
+import { GeneralWrapper } from '../components/GlobalStyles';
 
 import { receiveUserData, 
     receiveUsername, 
@@ -133,7 +134,7 @@ const Room = () => {
     
 
     return (
-        <Wrapper>
+        <GeneralWrapper>
             <MediaDiv>
                 <Media />
             </MediaDiv>
@@ -168,20 +169,11 @@ const Room = () => {
                 <MyButton onClick={micClick}><Icon icon={micButton} /></MyButton>
                 <MyButton onClick={gamesClick}><Icon size={20} icon={basic_joypad} /></MyButton>
             </NavDiv>
-        </Wrapper>
+        </GeneralWrapper>
     )
 };
 
 //---------------------------------- STYLES ----------------------------------
-
-const Wrapper = styled.div`
-    width: 100vw;
-    height: 100wh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
 
 const MediaDiv = styled.div`
     width: 90%;
@@ -226,25 +218,9 @@ const ChatWrapper = styled.div`
     grid-template-rows: repeat(4, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
-
-//     .fadeOut{
-//         opacity:0;
-//         width:0;
-//         height:0;
-//         transition: width 0.5s 0.5s, height 0.5s 0.5s, opacity 0.5s;
-   
-//    }
-//    .fadeIn{
-//         opacity:1;
-//         width:100px;
-//         height:100px;
-//         transition: width 0.5s, height 0.5s, opacity 0.5s 0.5s;
-   
-//    }
 `;
 
 const QueueDiv = styled.div`
-    // flex-grow: 1; 
     grid-area: 1 / 1 / 2 / 2; 
     overflow-x: auto;
     overflow-anchor: none;
@@ -256,7 +232,6 @@ const QueueDiv = styled.div`
 `;
 
 const ChatDiv = styled.div`
-    // flex-grow: 3;
     grid-area: 2 / 1 / 5 / 2; 
 `;
 

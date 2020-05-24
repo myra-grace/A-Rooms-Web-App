@@ -11,7 +11,6 @@ const Queue = () => {
     const [itemsInQueueDiv, setItemsInQueueDiv] = useState([]);
     const [switchUp, setSwitchUp] = useState(false);
     const roomID = useSelector(state => state.roomReducer.roomID);
-    //render thumbnails in queue box
 
 
     const handleReceiveQueue = (item) => {
@@ -36,7 +35,6 @@ const Queue = () => {
     return (
         <Wrapper>
                 {itemsInQueueDiv.map((thumbnail) => {
-                console.log('thumbnail: ', thumbnail);
                 return (
                     <QueueSplitter k={Object.keys(thumbnail)} v={Object.values(thumbnail)}/>
                 )
