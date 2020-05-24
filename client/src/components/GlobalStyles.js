@@ -1,4 +1,49 @@
 import { createGlobalStyle } from "styled-components";
+import styled from 'styled-components';
+
+export const CircleWrapper = styled.div`
+    border: 3px solid #E0CAFF;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 10px #588b76;
+    background-image : linear-gradient(0deg, rgba(63,171,251,1) 0%, rgba(198,70,252,1) 90%);
+
+    width: 500px;
+    height: 500px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    // @media screen and (max-width: 1200px) {
+    //     width: 500px;
+    //     height: 500px;
+    //     }
+
+    //     @media screen and (max-width: 1000px) {
+    //         width: 400px;
+    //         height: 400px;
+    //     }
+
+    //     @media screen and (max-width: 800px) {
+    //         width: 300px;
+    //         height: 300px;
+    //     }
+
+    //     @media screen and (max-width: 600px) {
+    //         width: 200px;
+    //         height: 200px;
+    //     }
+`;
+
+export const GeneralWrapper = styled.div`
+    width: 100vw;
+    height: 100wh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
 
 const GlobalStyles = createGlobalStyle`
     html {

@@ -25,8 +25,10 @@ const useKey = (key, cb) => {
 }
 //---------------------------------------------------------------------------------
 const Telestrations = (props) => {
+    console.log('props: ', props);
     const database = firebase.database();
     const roomsRef = database.ref('rooms');
+    
     const [divBgone, setDivBgone] = useState(false);
     const [type, setType] = useState("word"); 
     const [bookOwner, setBookOwner] = useState(null);
@@ -36,6 +38,8 @@ const Telestrations = (props) => {
     const [gameplay, setGameplay] = useState(false); 
     const [exchangeBook, setExchangeBook] = useState(false);
     const [switchUp, setSwitchUp] = useState(false);
+    const [gameOver, setGameOver] = useState(false);
+
     const username = useSelector(state => state.userReducer.username);
     const userID = useSelector(state => state.userReducer.id);
     const roomID = useSelector(state => state.roomReducer.roomID);
@@ -62,6 +66,21 @@ const Telestrations = (props) => {
         })
     }, [switchUp])
 
+    const changeBookOwner = () => {
+        //activate timer
+        if (bookOwner === userID) {
+            setGameplay(false);
+            setGameOver(true);
+        } else if (bookOwner === null) {
+            setBookOwner(userID);
+        } else {
+            //find where at in array
+            //when reach arr.length go to [0]
+            //continue moving right
+            setBookOwner();
+        }
+    }
+
     // const stopTimeout = () => {
     //     clearTimeout(playGame);
     // }
@@ -82,44 +101,7 @@ const Telestrations = (props) => {
         }
     }
     // }, 15000);
-
-
-    // if (gameplay === false) return
-
-    //retrieve who's book's ID
-    // move input to bottom = need to see friend's drawing and guess it
-    // figure out why doesn't work w/ touch screen
-
-
-    // let counter = 15;
-
-    // const countdownFromTen = setInterval(() => {
-    //     // document.getElementById("timer").textContent = counter //HELP
-    //     counter--
-    //     if (counter === -1) {
-    //         counter = 15;
-    //     }
-    // }, 1500); //HELP. MESSES UP AFTER INTERACTING WITH GAME seems like there are double and one's behind
-    
-    // setInterval(() => {
-    //     console.log("ZER0!");
-    // //     //real-time countdown in corner
-    // //     if (exchange === false) {
-    // //         //if click spacebar do nothing
-    // //         setExchange(true);
-    // //         // exchange = true;
-
-    // //         console.log('word: ', word);
-    // //         console.log('exchange: ', exchange);
-    // //     }
-
-    // //     setWord('');
-    // //     setExchange(false);
-    // //     // exchange = false;
-    // }, 11 * 1000);
-
-    // slideshow results (of everyone? but if >6 then only own) when done round then
-    //destroy /game folder when end game
+    console.log('gameplay: ', gameplay);
     
 //------------------------------------- HTML -------------------------------------
     useKey("Enter", sendOver);
@@ -131,11 +113,12 @@ const Telestrations = (props) => {
                 {gameplay || !divBgone ? null :
                 <div style={{zIndex: "1", position: "absolute"}}>
                     <StyledButton onClick={() => {
-                        console.log('myQueuedIDs: ', props.myQueuedIDs);
-                        if (props.currentMedia !== props.myQueuedIDs.includes(props.currentMedia)) return
-                        //check if person who put in queue is you, then -->
-                        setGameplay(true); //DOESN'T WORK
-                        console.log("GAMEPLAY", gameplay);
+                        console.log('currentMedia: ', props.currentMedia);
+                        console.log('props.sharedFiles: ', props.sharedFiles);
+                        if (props.sharedFiles.includes(props.currentMedia)) {
+                            setGameplay(true); //DOESN'T WORK
+                            changeBookOwner();
+                        }
                     }}>Start Game!</StyledButton>
                 </div>
                 }

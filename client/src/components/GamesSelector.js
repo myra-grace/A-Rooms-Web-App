@@ -20,7 +20,7 @@ const GamesSelector = () => {
     const handleTele = (event) => {
         event.preventDefault();
         dispatch(gameName("Telestrations"))
-        dispatch(addToSharedFiles(fileID));
+        dispatch(addToSharedFiles(fileID.toString()));
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`Telestrations`);
         dispatch(gamesDivToggle(!gamesDiv));
     }
@@ -28,7 +28,7 @@ const GamesSelector = () => {
     const handleSnake = (event) => {
         event.preventDefault();
         dispatch(gameName("Snake"))
-        dispatch(addToSharedFiles(fileID));
+        dispatch(addToSharedFiles(fileID.toString()));
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`Snake`);
         dispatch(gamesDivToggle(!gamesDiv));
     }
