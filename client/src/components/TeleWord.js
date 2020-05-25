@@ -3,25 +3,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { storeInputTele } from '../actions';
 //------------------------------------------------------------
-
-const useKey = (key, cb) => {
-    const callbackRef = useRef(cb);
-
-    useEffect(() => {
-        callbackRef.current = cb;
-    });
-
-    useEffect(() => {
-        const keyHandler = (event) => {
-            if (event.code === key) {
-                callbackRef.current(event);
-            }
-        }
-        document.addEventListener("keypress", keyHandler);
-        return () => document.removeEventListener("keypress", keyHandler);
-    }, [key]);
-}
-
 //---------------------------------------------------------------------------------
 const Telestrations = () => {
     const [wordInput, setWordInput] = useState('');
@@ -31,10 +12,11 @@ const Telestrations = () => {
 
     const maxCharacters = 15;
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
+    useEffect(() => {
         dispatch(storeInputTele(wordInput));
-    }
+    }, [wordInput])
+        
+
 
     const handleInput = (event) => {
         event.preventDefault();
@@ -42,10 +24,8 @@ const Telestrations = () => {
         if (wordInput.length >= maxCharacters) return //PREVENT SPACEBAR ALSO
         setWordInput(userTyped);
         console.log('word: ', wordInput);
-        dispatch(storeInputTele(wordInput));//missing a step
     }
 
-    useKey("Enter", handleSubmit);
 //------------------------------------- HTML -------------------------------------
 
     return (

@@ -28,8 +28,6 @@ const TeleDrawing = () => {
             context.shadowColor = 'dodgerblue';
             context.shadowBlur = 20;
             context.lineTo(event.offsetX, event.offsetY);
-            console.log('event.clientY: ', event.clientY);
-            console.log('event.clientX: ', event.clientX);
             context.stroke();
             context.beginPath();
             context.moveTo(event.offsetX, event.offsetY);
@@ -37,14 +35,12 @@ const TeleDrawing = () => {
         }
 
         const start = (event) => {
-            console.log('start');
             event.preventDefault();
             drawing = true;
             draw(event);
         }
 
         const stop = (event) => {
-            console.log('stop');
             event.preventDefault();
             drawing = false;
             context.beginPath();
@@ -53,7 +49,6 @@ const TeleDrawing = () => {
         }
 
         if (clear === true) {
-            console.log('clearCanvas');
             context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             context.beginPath();
             setClear(!clear);

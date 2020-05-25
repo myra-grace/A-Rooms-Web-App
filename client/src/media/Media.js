@@ -44,10 +44,6 @@ const Media = () => {
         if (queueIDs.includes(id)) return
         queueIDs.push(id);
         setQueueIDs(queueIDs);
-        console.log('queueIDs: ', queueIDs[0]);
-        console.log("myQueuedIDs", myQueuedIDs);
-        console.log('sharedFiles: ', sharedFiles);
-        console.log('queueArr: ', queueArr);
     }
 
 
@@ -68,6 +64,7 @@ const Media = () => {
         console.log('we done here');
         let fileID = queueIDs[0];
         storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete();
+        roomsRef.child(`${roomID}`).child("game").remove();
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).remove()
         .then(() => {
             let changedQueueIds = queueIDs.filter(id => {
@@ -86,19 +83,8 @@ const Media = () => {
     useEffect(() => {
         queueArr = sharedFiles ? sharedFiles : [];
         setMyQueuedIDs(queueArr)
-        console.log('USE EFFECT queueArr: ', queueArr);
-        console.log('USE EFFECT myQueuedIDs: ', myQueuedIDs);
-        console.log('USE EFFECT sharedFiles: ', sharedFiles);
-        // if (sharedFiles.length >= 0) {
-        //     setSwitcheroo(true);
-        // }
     }, [sharedFiles])
 
-    // console.log("**LEFT**", mediaContainerRef.current.offsetLeft);
-    // console.log("**TOP**", mediaContainerRef.current.offsetTop);
-
-    console.log('sharedFiles: ', sharedFiles);
-    console.log('queueIDs: ', queueIDs);
     return (
         <Wrapper ref={mediaContainerRef}>
             {itemsInQueueArray.length > 1 && sharedFiles.includes(queueIDs[0]) ?
