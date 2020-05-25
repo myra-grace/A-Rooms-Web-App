@@ -13,9 +13,6 @@ const GameRenderer = (props) => { //props passed down is 1 step behind when fina
 
     let game = props.gameTitle;
 
-    console.log("LEFT", props.mediaContainerRefLeft);
-    console.log("Top", props.mediaContainerRefTop);
-
     return (
         <GeneralWrapper>
             {game == "Telestrations" ?

@@ -31,14 +31,12 @@ const Telestrations = (props) => {
     
     const [divBgone, setDivBgone] = useState(false);
     const [type, setType] = useState("word"); 
-    const [bookOwner, setBookOwner] = useState(null);
-    const [toDraw, setToDraw] = useState("Give a word");
-    const [toGuess, setToGuess] = useState("");
+    const [bookOwner, setBookOwner] = useState("");
     const [playersArray, setPlayersArray] = useState([]);
     const [gameplay, setGameplay] = useState(false); 
-    const [exchangeBook, setExchangeBook] = useState(false);
     const [switchUp, setSwitchUp] = useState(false);
     const [gameOver, setGameOver] = useState(false);
+    const [exchange, setExchange] = useState(false);
 
     const username = useSelector(state => state.userReducer.username);
     const userID = useSelector(state => state.userReducer.id);
@@ -50,77 +48,117 @@ const Telestrations = (props) => {
         if (playersArray.includes(p)) return
         playersArray.push(p);
         setPlayersArray(playersArray);
-        console.log('playersArray: ', playersArray);
     }
 
     useEffect(() => {
         roomsRef.child(`${roomID}`).child("game").child('playerIDs').on('child_added', snapshot => {
             let player = "";
             player = snapshot.key;
-            console.log('player: ', snapshot.key);
-            console.log(gameplay);
             handleReceivePlayer(player);
             if (switchUp === false && !playersArray.includes(snapshot.key)) {
                 setSwitchUp(true);
             }
         })
     }, [switchUp])
-
-    const changeBookOwner = () => {
-        //activate timer
-        if (bookOwner === userID) {
-            setGameplay(false);
-            setGameOver(true);
-        } else if (bookOwner === null) {
-            setBookOwner(userID);
-        } else {
-            //find where at in array
-            //when reach arr.length go to [0]
-            //continue moving right
-            setBookOwner();
+    
+    useEffect(() => {
+        if (bookOwner === "") {
+            return
         }
-    }
-
-    // const stopTimeout = () => {
-    //     clearTimeout(playGame);
-    // }
-
-    // const playGame = setTimeout(() => {
-    const sendOver = () => {
-        console.log("setTimeout");
-        console.log('playersArray: ', playersArray);
-        if (gameplay === false) return        
-        // if (bookOwner === userID) return
         if (type === "word") {
             roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${input}`);
-            console.log('Type: ', type);
+            console.log('type: ', type);
             setType("sketch");
         } else {
             roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${input}`)
             setType("word");
         }
+        roomsRef.child(`${roomID}`).child("game").child("status").set("playing")
+    }, [bookOwner, exchange])
+
+
+    const sendOver = (event) => {
+        event.preventDefault();
+        console.log('gameplay: ', gameplay);
+        console.log('playersArray: ', playersArray);
+        console.log('bookOwner: ', bookOwner);
+        if (gameOver === true) return
+        if (props.sharedFiles.includes(props.currentMedia)) {
+            if (bookOwner === userID) {
+                setGameOver(true);
+            } else {
+                if (bookOwner === "" && input !== "") {
+                    setBookOwner(userID);
+                } else {
+                    //find where at in array
+                    //when reach arr.length go to [0]
+                    //continue moving right
+                    setBookOwner("PLACEHOLDER");
+                }
+            }
+        }
     }
-    // }, 15000);
+
+    // useEffect(() => {
+    //     roomsRef.child(`${roomID}`).child("game").child('books').on('child_added', snapshot => {
+    //         console.log('snapshot.val(): ', snapshot.val());
+    //         setExchange(!exchange);
+    //     })
+    // }, [gameplay])
+
+    // useEffect(() => {
+    //     if (!props.sharedFiles.includes(props.currentMedia)) {
+    //         roomsRef.child(`${roomID}`).child("game").on('child_added', snapshot => {
+    //             console.log('snapshot.val(): ', snapshot.val());
+    //             setGameplay(true);
+    //         })
+    //     }
+    // }, [exchange])
+
+    // useEffect(() => {
+    //     roomsRef.child(`${roomID}`).child("game").on('child_added', snapshot => {debugger
+    //         let status = false;
+    //         status = snapshot.val();
+    //         console.log('snapshot.val(): ', snapshot.val());
+    //         if (status === "playing") {
+    //             setGameplay(true)
+    //         } else if (status === "exchange") {
+    //             if (bookOwner === "") {
+    //                 setBookOwner(userID)
+    //             }
+    //             setExchange(!exchange); debugger
+    //         }
+    //     })
+    // }, [])
+
+    // useEffect(() => {
+    //     if (gameplay === true) {
+    //         roomsRef.child(`${roomID}`).child("game").child("status").set("playing");
+    //     }
+    // }, [gameplay])
+
+
+    useKey("Enter", sendOver);
     console.log('gameplay: ', gameplay);
     
 //------------------------------------- HTML -------------------------------------
-    useKey("Enter", sendOver);
+    
     roomsRef.child(`${roomID}`).child("game").child("playerIDs").child(`${userID}`).onDisconnect().remove();
+    roomsRef.child(`${roomID}`).child("game").child("books").child(`${userID}`).onDisconnect().remove();
 
     if (!gameplay) {
         return (
             <Wrapper>
-                {gameplay || !divBgone ? null :
+                {!gameplay && divBgone && props.sharedFiles.includes(props.currentMedia) ?
                 <div style={{zIndex: "1", position: "absolute"}}>
                     <StyledButton onClick={() => {
                         console.log('currentMedia: ', props.currentMedia);
                         console.log('props.sharedFiles: ', props.sharedFiles);
                         if (props.sharedFiles.includes(props.currentMedia)) {
-                            setGameplay(true); //DOESN'T WORK
-                            changeBookOwner();
+                            setGameplay(true);
                         }
                     }}>Start Game!</StyledButton>
-                </div>
+                </div> : null
                 }
                 {divBgone ? null :
                 <>
