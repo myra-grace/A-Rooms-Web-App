@@ -38,7 +38,6 @@ const Home = () => {
     //if already signed-in "Sign-in" link changes to username
 
     const handleCreate = () => {
-        console.log('CREATE');
         dispatch(createRoom());
         //post to fireBase
         if (status !== "signed-in") {
@@ -50,7 +49,6 @@ const Home = () => {
     };
 
     const handleJoin = () => {
-        console.log('JOIN');
         dispatch(joinRoom());
         //pull data from fireBase
         if (status !== "signed-in") {

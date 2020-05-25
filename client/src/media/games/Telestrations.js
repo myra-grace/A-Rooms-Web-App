@@ -25,7 +25,6 @@ const useKey = (key, cb) => {
 }
 //---------------------------------------------------------------------------------
 const Telestrations = (props) => {
-    console.log('props: ', props);
     const database = firebase.database();
     const roomsRef = database.ref('rooms');
     
@@ -37,6 +36,7 @@ const Telestrations = (props) => {
     const [switchUp, setSwitchUp] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [exchange, setExchange] = useState(false);
+    const [willPlay, setWillPlay] = useState(false);
 
     const username = useSelector(state => state.userReducer.username);
     const userID = useSelector(state => state.userReducer.id);
@@ -51,37 +51,35 @@ const Telestrations = (props) => {
     }
 
     useEffect(() => {
-        roomsRef.child(`${roomID}`).child("game").child('playerIDs').on('child_added', snapshot => {
-            let player = "";
-            player = snapshot.key;
-            handleReceivePlayer(player);
-            if (switchUp === false && !playersArray.includes(snapshot.key)) {
-                setSwitchUp(true);
-            }
-        })
-    }, [switchUp])
+        if (willPlay === true) {
+            roomsRef.child(`${roomID}`).child("game").child('playerIDs').on('child_added', snapshot => {
+                let player = "";
+                player = snapshot.key;
+                handleReceivePlayer(player);
+                if (switchUp === false && !playersArray.includes(snapshot.key)) {
+                    setSwitchUp(true);
+                }
+            })
+        }
+    }, [switchUp, willPlay])
     
     useEffect(() => {
-        if (bookOwner === "") {
-            return
+        if (willPlay === true) {
+            if (bookOwner === "") return
+            if (type === "word") {
+                roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${input}`);
+                console.log('type: ', type);
+                setType("sketch");
+            } else {
+                roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${input}`)
+                setType("word");
+            }
         }
-        if (type === "word") {
-            roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${input}`);
-            console.log('type: ', type);
-            setType("sketch");
-        } else {
-            roomsRef.child(`${roomID}`).child("game").child("books").child(`${bookOwner}`).child(`${userID}`).child(`${type}`).set(`${input}`)
-            setType("word");
-        }
-        roomsRef.child(`${roomID}`).child("game").child("status").set("playing")
-    }, [bookOwner, exchange])
+    }, [bookOwner])
 
 
     const sendOver = (event) => {
         event.preventDefault();
-        console.log('gameplay: ', gameplay);
-        console.log('playersArray: ', playersArray);
-        console.log('bookOwner: ', bookOwner);
         if (gameOver === true) return
         if (props.sharedFiles.includes(props.currentMedia)) {
             if (bookOwner === userID) {
@@ -99,43 +97,37 @@ const Telestrations = (props) => {
         }
     }
 
-    // useEffect(() => {
-    //     roomsRef.child(`${roomID}`).child("game").child('books').on('child_added', snapshot => {
-    //         console.log('snapshot.val(): ', snapshot.val());
-    //         setExchange(!exchange);
-    //     })
-    // }, [gameplay])
+//----------------------------------- NOT OWNER -----------------------------------
+    useEffect(() => {
+        if (!props.sharedFiles.includes(props.currentMedia) && willPlay === true && gameplay === true) {
+            roomsRef.child(`${roomID}`).child("game").child('books').on('child_added', snapshot => {
+                console.log('snapshot.val(): ', snapshot.val());
+                // setExchange(!exchange);
+                if (bookOwner === userID) {
+                    setGameOver(true);
+                } else {
+                    if (bookOwner === "") {
+                        setBookOwner(userID);
+                    } else {
+                        //find where at in array
+                        //when reach arr.length go to [0]
+                        //continue moving right
+                        setBookOwner("PLACEHOLDER");
+                    }
+                }
+            })
+        }
+    }, [gameplay])
 
-    // useEffect(() => {
-    //     if (!props.sharedFiles.includes(props.currentMedia)) {
-    //         roomsRef.child(`${roomID}`).child("game").on('child_added', snapshot => {
-    //             console.log('snapshot.val(): ', snapshot.val());
-    //             setGameplay(true);
-    //         })
-    //     }
-    // }, [exchange])
-
-    // useEffect(() => {
-    //     roomsRef.child(`${roomID}`).child("game").on('child_added', snapshot => {debugger
-    //         let status = false;
-    //         status = snapshot.val();
-    //         console.log('snapshot.val(): ', snapshot.val());
-    //         if (status === "playing") {
-    //             setGameplay(true)
-    //         } else if (status === "exchange") {
-    //             if (bookOwner === "") {
-    //                 setBookOwner(userID)
-    //             }
-    //             setExchange(!exchange); debugger
-    //         }
-    //     })
-    // }, [])
-
-    // useEffect(() => {
-    //     if (gameplay === true) {
-    //         roomsRef.child(`${roomID}`).child("game").child("status").set("playing");
-    //     }
-    // }, [gameplay])
+    useEffect(() => {
+        if (!props.sharedFiles.includes(props.currentMedia) && willPlay === true && gameplay === false) {
+            console.log("++++++++++++++");
+            roomsRef.child(`${roomID}`).child("game").on('child_added', snapshot => {
+                console.log('snapshot.val(): ', snapshot.val());
+                setGameplay(true);
+            });
+        }
+    }, [willPlay])
 
 
     useKey("Enter", sendOver);
@@ -156,6 +148,7 @@ const Telestrations = (props) => {
                         console.log('props.sharedFiles: ', props.sharedFiles);
                         if (props.sharedFiles.includes(props.currentMedia)) {
                             setGameplay(true);
+                            roomsRef.child(`${roomID}`).child("game").child("status").set("playing")
                         }
                     }}>Start Game!</StyledButton>
                 </div> : null
@@ -168,8 +161,12 @@ const Telestrations = (props) => {
                                 console.log("Yes!");
                                 roomsRef.child(`${roomID}`).child("game").child('playerIDs').child(`${userID}`).set(`${username}`);
                                 setDivBgone(!divBgone);
+                                setWillPlay(true);
                         }}>Yes</StyledButton>
-                        <StyledButton onClick={() => {setDivBgone(true)}}>Nope</StyledButton>
+                        <StyledButton onClick={() => {
+                            setDivBgone(true)
+                            setWillPlay(false);
+                        }}>Nope</StyledButton>
                     </div>
                 </>
                 }
@@ -181,6 +178,9 @@ const Telestrations = (props) => {
 
     return (
         <Wrapper>
+            {gameplay && divBgone && props.sharedFiles.includes(props.currentMedia) ?
+            <StyledButton style={{position: "absolute", bottom:"0", right:"10%"}} onClick={sendOver}>Switch!</StyledButton> : null
+            }
             {type === "word" ?
                 <TeleWord /> : null
             }
