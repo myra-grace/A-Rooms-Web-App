@@ -218,6 +218,7 @@ const ChatWrapper = styled.div`
     grid-template-rows: repeat(4, 1fr);
     grid-column-gap: 0px;
     grid-row-gap: 0px;
+    z-index: 5;
 `;
 
 const QueueDiv = styled.div`
@@ -245,6 +246,7 @@ const GamesDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+    z-index: 5;
 `;
 
 const ShareDiv = styled.div`
@@ -259,7 +261,7 @@ const ShareDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1;
+    z-index: 5;
 `;
 
 export default Room;

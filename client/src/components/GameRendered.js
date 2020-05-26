@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import SnakeGame from '../media/games/SnakeGame';
 import Telestrations from '../media/games/Telestrations';
+import DrawStory from '../media/games/DrawStory';
 import firebase from 'firebase';
 import { GeneralWrapper } from '../components/GlobalStyles';
 
@@ -20,6 +21,9 @@ const GameRenderer = (props) => { //props passed down is 1 step behind when fina
             }
             {game == "Snake" ?
             <SnakeGame currentMedia={props.currentMedia} sharedFiles={props.sharedFiles}/> : null
+            }
+            {game == "DrawStory" ?
+            <DrawStory currentMedia={props.currentMedia} sharedFiles={props.sharedFiles}/> : null
             }
         </GeneralWrapper>
     )

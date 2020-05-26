@@ -21,6 +21,14 @@ const roomReducer = (state = initialState, action) => {
                 input: action.input,
             };
         }
+        case 'STORE_INPUT_DAS': {
+            return {
+                ...state,
+                status: 'sent input',
+                game: 'DrawStory',
+                input: action.input,
+            };
+        }
     
         default:
             return state;

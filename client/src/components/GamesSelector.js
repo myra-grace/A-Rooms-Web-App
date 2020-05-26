@@ -33,6 +33,14 @@ const GamesSelector = () => {
         dispatch(gamesDivToggle(!gamesDiv));
     }
 
+    const handleDrawStory = (event) => {
+        event.preventDefault();
+        dispatch(gameName("Snake"))
+        dispatch(addToSharedFiles(fileID.toString()));
+        roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`DrawStory`);
+        dispatch(gamesDivToggle(!gamesDiv));
+    }
+
 
     return (
         <Wrapper>
@@ -41,6 +49,9 @@ const GamesSelector = () => {
             </StyledButton>
             <StyledButton onClick={handleSnake}>
                 <StyledImg src="https://www.publicdomainpictures.net/pictures/90000/velka/cobra-snake-poisonous.jpg"/>
+            </StyledButton>
+            <StyledButton onClick={handleDrawStory}>
+                <StyledImg src="https://freesvg.org/img/Feather-Quill-And-Inkwell-Silhouette.png"/>
             </StyledButton>
         </Wrapper>
     )

@@ -92,7 +92,7 @@ const Media = () => {
             }
 
             {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "game" ?
-                <GameRenderer gameTitle={Object.values(itemsInQueueArray[0])[0]} currentMedia={queueIDs[0]} sharedFiles={sharedFiles} mediaContainerRefLeft={mediaContainerRef.offsetLeft} mediaContainerRefTop={mediaContainerRef.offsetTop}/> : null
+                <GameRenderer gameTitle={Object.values(itemsInQueueArray[0])[0]} currentMedia={queueIDs[0]} sharedFiles={sharedFiles} /> : null
             }
             
             {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "image" ?

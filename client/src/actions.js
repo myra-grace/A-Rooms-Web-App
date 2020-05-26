@@ -121,3 +121,8 @@ export const storeInputTele = (input) => ({
     type: 'STORE_INPUT',
     input,
 })
+//DRAW-A-STORY
+export const storeInputDAS = (input) => ({
+    type: 'STORE_INPUT_DAS',
+    input,
+})
