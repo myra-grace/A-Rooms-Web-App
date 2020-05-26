@@ -119,27 +119,32 @@ const DrawStory = () => {
         setClear(!clear);
         setDbURL(snapshot.val())
     })
-  }, [])
+  }, [bookHolder])
 
-  let numCount = 0;
 //----- COUNTING
-  useEffect(() => {
-    roomsRef.child(`${roomID}`).child("game").child("books").on("child_added", () => {
-        if (numCount > playersArray.length +1) {
-            setGameOver(true); //NOT WORKING 
-        } else {
-            numCount += 1;
-            // setCounter(counter +1); //NOT WORKING
-            debugger
+    useEffect(() => {
+        if (playersArray.length < 1) return
+        console.log('playersArray: ', playersArray);
+        if (counter >= playersArray.length) {
+            setGameOver(true); 
         }
+    }, [counter])
+
+  useEffect(() => {
+    roomsRef.child(`${roomID}`).child("game").child("status").on("child_added", snapshot => {
+        console.log('snapshot: ', snapshot.key);
+        let round = Number(snapshot.key)
+        console.log('playersArray: ', playersArray); 
+        setCounter(round +1);
         setClear(!clear);
     })
-  }, [])
+  }, [bookHolder])
 
 //----- SENDING
   useEffect(() => {
       if (input === "") return
       roomsRef.child(`${roomID}`).child("game").child("books").child(`${userID}`).set(`${input}`);
+      roomsRef.child(`${roomID}`).child("game").child("status").child(`${counter}`).set(`round`);
       setClear(!clear);
   }, [bookHolder])
 
@@ -155,7 +160,6 @@ const DrawStory = () => {
   console.log("**************************************");
   console.log("GAMEOVER", gameOver);
   console.log("COUNTER", counter);
-  console.log('numCount: ', numCount);
 //   console.log('dbURL: ', dbURL);
   console.log('bookHolder: ', bookHolder);
 
