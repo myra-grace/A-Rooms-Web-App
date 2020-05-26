@@ -51,7 +51,7 @@ const GamesSelector = () => {
                 <StyledImg src="https://www.publicdomainpictures.net/pictures/90000/velka/cobra-snake-poisonous.jpg"/>
             </StyledButton>
             <StyledButton onClick={handleDrawStory}>
-                <StyledImg src="https://freesvg.org/img/Feather-Quill-And-Inkwell-Silhouette.png"/>
+                <StyledImg src="https://t3.ftcdn.net/jpg/03/11/05/28/240_F_311052888_AhKslmoMeMvVHlybGu0aRNqXXZHaDj6E.jpg"/>
             </StyledButton>
         </Wrapper>
     )

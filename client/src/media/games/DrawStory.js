@@ -29,7 +29,7 @@ const DrawStory = () => {
   const roomID = useSelector((state) => state.roomReducer.roomID);
   const input = useSelector((state) => state.gameReducer.input);
 
-//---------------------------------- CANVAS ----------------------------------
+  //---------------------------------- CANVAS ----------------------------------
   let drawing = false;
   let URL = "";
 
@@ -98,68 +98,95 @@ const DrawStory = () => {
             arr.push(Number(item.key));
           });
           setPlayersArray(arr);
-          console.log("arr: ", arr);
+          console.log("*******arr: ", arr);
         });
     }
   }, [willPlay]);
 
-//----- DRAWING 
+  //----- DRAWING
   useEffect(() => {
     const context = canvasRef.current.getContext("2d");
-    let img = new Image;
+    let img = new Image();
     img.onload = () => {
-        context.drawImage(img,0,0);
-    }
+      context.drawImage(img, 0, 0);
+    };
     img.src = dbURL;
-  }, [dbURL])
+  }, [dbURL]);
 
-//----- GETTING URL
+  //----- GETTING URL & COUNTING //db counter //books arr.length as counter obj.keys
   useEffect(() => {
-    roomsRef.child(`${roomID}`).child("game").child("books").on("child_added", snapshot => {
-        setClear(!clear);
-        setDbURL(snapshot.val())
-    })
-  }, [])
+    roomsRef
+      .child(`${roomID}`)
+      .child("game")
+      .child("books")
+      .on("value", async (snapshot) => {
+        console.log('snapshot: ', snapshot.parent().child("userIDs").val())
+        let snapval = await snapshot.val();
+        if (snapval !== null) {
+            console.log('snapval: ', snapval);
+          if (snapval.length !== null) {
+            console.log(
+              "if (counter === snapval.playerIDs.length &&snapval.playerIDs.length > 1): ",
+              counter +
+                " === " +
+                snapval.playerIDs.length +
+                " && " +
+                snapval.playerIDs.length +
+                " > 1): "
+            );
+            if (
+              counter === snapval.playerIDs.length &&
+              snapval.playerIDs.length > 1
+            ) {
+              console.log("GAMEOVERRRR");
+              setGameOver(true); //NOT WORKING
+            }
+          }
 
-  let numCount = 0;
-//----- COUNTING
-  useEffect(() => {
-    roomsRef.child(`${roomID}`).child("game").child("books").on("child_added", () => {
-        if (numCount > playersArray.length +1) {
-            setGameOver(true); //NOT WORKING 
-        } else {
-            numCount += 1;
-            // setCounter(counter +1); //NOT WORKING
-            debugger
+          console.log("^^^^^snapval: ", snapval);
+          if (snapval.books !== null && snapval.books !== undefined) {
+            let bookValues = Object.values(snapval.books);
+            setClear(!clear);
+            setDbURL(bookValues[bookValues.length - 1]);
+            setCounter(bookValues.length); //NOT WORKINGg
+          }
         }
-        setClear(!clear);
-    })
-  }, [])
+      });
+  }, []);
 
-//----- SENDING
+  //----- SENDING
   useEffect(() => {
-      if (input === "") return
-      roomsRef.child(`${roomID}`).child("game").child("books").child(`${userID}`).set(`${input}`);
-      setClear(!clear);
-  }, [bookHolder])
+    if (input === "") return;
+    roomsRef
+      .child(`${roomID}`)
+      .child("game")
+      .child("books")
+      .child(`${userID}`)
+      .set(`${input}`);
+    setClear(!clear);
+  }, [bookHolder]);
 
   const sendOver = (event) => {
     event.preventDefault();
+    if (playersArray.length < 2) return;
     console.log("SEND OVER");
+    console.log("BOOK HOLDERR", bookHolder);
     if (bookHolder === 0) {
-        setBookHolder(playersArray[0])
+      setBookHolder(playersArray[0]);
     } else {
-        setBookHolder(playersArray[counter])
+      console.log("INSIDEE counter: ", counter);
+      setBookHolder(playersArray[counter]);
     }
-  }
+  };
+
   console.log("**************************************");
+  console.log("PLAYERS ARR LENGTH", playersArray.length);
   console.log("GAMEOVER", gameOver);
   console.log("COUNTER", counter);
-  console.log('numCount: ', numCount);
-//   console.log('dbURL: ', dbURL);
-  console.log('bookHolder: ', bookHolder);
+  //   console.log("dbURL: ", dbURL);
+  console.log("bookHolder: ", bookHolder);
 
-//------------------------------------- HTML -------------------------------------
+  //------------------------------------- HTML -------------------------------------
 
   return (
     <Wrapper>
@@ -194,7 +221,7 @@ const DrawStory = () => {
       )}
       <h1></h1>
 
-    <canvas
+      <canvas
         id="canvas"
         style={{ border: "1px solid magenta" }}
         ref={canvasRef}
@@ -202,29 +229,25 @@ const DrawStory = () => {
         height={`${CANVAS_SIZE[1]}px`}
       />
 
-    <div style={{display: "flex", justifyContent: "space-around"}} >
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
         <StyledButton
-        onClick={() => {
-          setClear(!clear);
-        }}
-      >
-        Clear
-      </StyledButton>
-      {willPlay === false ? null :
-      <StyledButton
-        onClick={sendOver}
-      >
-        Send!
-      </StyledButton>
-    }
-    </div>
+          onClick={() => {
+            setClear(!clear);
+          }}
+        >
+          Clear
+        </StyledButton>
+        {willPlay === false ? null : (
+          <StyledButton onClick={sendOver}>Send!</StyledButton>
+        )}
+      </div>
 
-    {gameOver ? 
-    <StyledDiv>
-     <h1>A Masterpiece!</h1>
-      <img src={dbURL} />
-    </StyledDiv> : null
-    }
+      {gameOver ? (
+        <StyledDiv>
+          <h1>A Masterpiece!</h1>
+          <img src={dbURL} />
+        </StyledDiv>
+      ) : null}
     </Wrapper>
   );
 };
