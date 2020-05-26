@@ -98,7 +98,6 @@ const DrawStory = () => {
             arr.push(Number(item.key));
           });
           setPlayersArray(arr);
-          console.log("*******arr: ", arr);
         });
     }
   }, [willPlay]);
@@ -115,76 +114,46 @@ const DrawStory = () => {
 
   //----- GETTING URL & COUNTING //db counter //books arr.length as counter obj.keys
   useEffect(() => {
-    roomsRef
-      .child(`${roomID}`)
-      .child("game")
-      .child("books")
-      .on("value", async (snapshot) => {
-        console.log('snapshot: ', snapshot.parent().child("userIDs").val())
-        let snapval = await snapshot.val();
-        if (snapval !== null) {
-            console.log('snapval: ', snapval);
-          if (snapval.length !== null) {
-            console.log(
-              "if (counter === snapval.playerIDs.length &&snapval.playerIDs.length > 1): ",
-              counter +
-                " === " +
-                snapval.playerIDs.length +
-                " && " +
-                snapval.playerIDs.length +
-                " > 1): "
-            );
-            if (
-              counter === snapval.playerIDs.length &&
-              snapval.playerIDs.length > 1
-            ) {
-              console.log("GAMEOVERRRR");
-              setGameOver(true); //NOT WORKING
-            }
-          }
+    roomsRef.child(`${roomID}`).child("game").child("books").on("child_added", snapshot => {
+        setClear(!clear);
+        setDbURL(snapshot.val())
+    })
+  }, [bookHolder])
 
-          console.log("^^^^^snapval: ", snapval);
-          if (snapval.books !== null && snapval.books !== undefined) {
-            let bookValues = Object.values(snapval.books);
-            setClear(!clear);
-            setDbURL(bookValues[bookValues.length - 1]);
-            setCounter(bookValues.length); //NOT WORKINGg
-          }
+//----- COUNTING
+    useEffect(() => {
+        if (playersArray.length < 1) return
+        if (counter >= playersArray.length) {
+            setGameOver(true); 
         }
-      });
-  }, []);
+    }, [counter])
+
+  useEffect(() => {
+    roomsRef.child(`${roomID}`).child("game").child("status").on("child_added", snapshot => {
+        let round = Number(snapshot.key)
+        console.log('playersArray: ', playersArray); 
+        setCounter(round +1);
+        setClear(!clear);
+    })
+  }, [bookHolder])
 
   //----- SENDING
   useEffect(() => {
-    if (input === "") return;
-    roomsRef
-      .child(`${roomID}`)
-      .child("game")
-      .child("books")
-      .child(`${userID}`)
-      .set(`${input}`);
-    setClear(!clear);
-  }, [bookHolder]);
+      if (input === "") return
+      roomsRef.child(`${roomID}`).child("game").child("books").child(`${userID}`).set(`${input}`);
+      roomsRef.child(`${roomID}`).child("game").child("status").child(`${counter}`).set(`round`);
+      setClear(!clear);
+  }, [bookHolder])
 
   const sendOver = (event) => {
     event.preventDefault();
-    if (playersArray.length < 2) return;
-    console.log("SEND OVER");
-    console.log("BOOK HOLDERR", bookHolder);
     if (bookHolder === 0) {
       setBookHolder(playersArray[0]);
     } else {
       console.log("INSIDEE counter: ", counter);
       setBookHolder(playersArray[counter]);
     }
-  };
-
-  console.log("**************************************");
-  console.log("PLAYERS ARR LENGTH", playersArray.length);
-  console.log("GAMEOVER", gameOver);
-  console.log("COUNTER", counter);
-  //   console.log("dbURL: ", dbURL);
-  console.log("bookHolder: ", bookHolder);
+  }
 
   //------------------------------------- HTML -------------------------------------
 
