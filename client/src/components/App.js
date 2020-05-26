@@ -64,7 +64,6 @@ const App = () => {
         <Route path="/sign-in" component={SignIn} />
         <Route path="/create-join" component={CreateJoin} />
         <Route path="/room/:roomID" component={Room} />
-        <Route path="/Telestrations" component={Telestrations} />
 
       </Switch>
     </Router>

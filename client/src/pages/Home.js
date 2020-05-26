@@ -41,7 +41,6 @@ const Home = () => {
         dispatch(createRoom());
         //post to fireBase
         if (status !== "signed-in") {
-            console.log('not signed-in');
             history.push(`/sign-in`);
         } else {
             history.push(`/create-join`);
@@ -52,7 +51,6 @@ const Home = () => {
         dispatch(joinRoom());
         //pull data from fireBase
         if (status !== "signed-in") {
-            console.log('not signed-in');
             history.push(`/sign-in`);
         } else {
             history.push(`/create-join`);
