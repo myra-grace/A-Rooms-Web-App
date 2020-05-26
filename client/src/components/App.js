@@ -64,6 +64,7 @@ const App = () => {
         <Route path="/sign-in" component={SignIn} />
         <Route path="/create-join" component={CreateJoin} />
         <Route path="/room/:roomID" component={Room} />
+        <Route path="/*" render={() => <Wrapper><h1>Nothing here...</h1> <img style={{borderRadius: "20%"}} src="https://i.gifer.com/3lL0.gif" /> </Wrapper>} />
 
       </Switch>
     </Router>
@@ -82,5 +83,13 @@ const StyledLink = styled(Link)`
     left: 2%;
     z-index: 3;
 `
+const Wrapper = styled.div`
+    width: 100%;
+    height: 100%;
+
+    display: block;
+    align-items: center;
+    justify-content: center;
+`;
 
 export default App;

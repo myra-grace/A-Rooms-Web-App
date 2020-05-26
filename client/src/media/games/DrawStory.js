@@ -29,7 +29,7 @@ const DrawStory = () => {
   const roomID = useSelector((state) => state.roomReducer.roomID);
   const input = useSelector((state) => state.gameReducer.input);
 
-//---------------------------------- CANVAS ----------------------------------
+  //---------------------------------- CANVAS ----------------------------------
   let drawing = false;
   let URL = "";
 
@@ -102,17 +102,17 @@ const DrawStory = () => {
     }
   }, [willPlay]);
 
-//----- DRAWING 
+  //----- DRAWING
   useEffect(() => {
     const context = canvasRef.current.getContext("2d");
-    let img = new Image;
+    let img = new Image();
     img.onload = () => {
-        context.drawImage(img,0,0);
-    }
+      context.drawImage(img, 0, 0);
+    };
     img.src = dbURL;
-  }, [dbURL])
+  }, [dbURL]);
 
-//----- GETTING URL
+  //----- GETTING URL & COUNTING //db counter //books arr.length as counter obj.keys
   useEffect(() => {
     roomsRef.child(`${roomID}`).child("game").child("books").on("child_added", snapshot => {
         setClear(!clear);
@@ -137,7 +137,7 @@ const DrawStory = () => {
     })
   }, [bookHolder])
 
-//----- SENDING
+  //----- SENDING
   useEffect(() => {
       if (input === "") return
       roomsRef.child(`${roomID}`).child("game").child("books").child(`${userID}`).set(`${input}`);
@@ -148,13 +148,14 @@ const DrawStory = () => {
   const sendOver = (event) => {
     event.preventDefault();
     if (bookHolder === 0) {
-        setBookHolder(playersArray[0])
+      setBookHolder(playersArray[0]);
     } else {
-        setBookHolder(playersArray[counter])
+      console.log("INSIDEE counter: ", counter);
+      setBookHolder(playersArray[counter]);
     }
   }
 
-//------------------------------------- HTML -------------------------------------
+  //------------------------------------- HTML -------------------------------------
 
   return (
     <Wrapper>
@@ -189,7 +190,7 @@ const DrawStory = () => {
       )}
       <h1></h1>
 
-    <canvas
+      <canvas
         id="canvas"
         style={{ border: "1px solid magenta" }}
         ref={canvasRef}
@@ -197,29 +198,25 @@ const DrawStory = () => {
         height={`${CANVAS_SIZE[1]}px`}
       />
 
-    <div style={{display: "flex", justifyContent: "space-around"}} >
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
         <StyledButton
-        onClick={() => {
-          setClear(!clear);
-        }}
-      >
-        Clear
-      </StyledButton>
-      {willPlay === false ? null :
-      <StyledButton
-        onClick={sendOver}
-      >
-        Send!
-      </StyledButton>
-    }
-    </div>
+          onClick={() => {
+            setClear(!clear);
+          }}
+        >
+          Clear
+        </StyledButton>
+        {willPlay === false ? null : (
+          <StyledButton onClick={sendOver}>Send!</StyledButton>
+        )}
+      </div>
 
-    {gameOver ? 
-    <StyledDiv>
-     <h1>A Masterpiece!</h1>
-      <img src={dbURL} />
-    </StyledDiv> : null
-    }
+      {gameOver ? (
+        <StyledDiv>
+          <h1>A Masterpiece!</h1>
+          <img src={dbURL} />
+        </StyledDiv>
+      ) : null}
     </Wrapper>
   );
 };

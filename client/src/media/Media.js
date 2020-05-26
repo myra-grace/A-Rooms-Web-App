@@ -139,7 +139,7 @@ const XButton = styled.button`
     position: absolute;
     top: 2%;
     right: 2%;
-    z-index: 1;
+    z-index: 5;
 `;
 
 export default Media;
