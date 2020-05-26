@@ -165,8 +165,8 @@ const Room = () => {
             <NavDiv>
                 <MyButton onClick={chatClick}><Icon icon={messageSquare} /></MyButton>
                 <MyButton onClick={shareClick}><Icon icon={shareButton} /></MyButton>
-                <MyButton onClick={videoClick}><Icon icon={videoButton} /></MyButton>
-                <MyButton onClick={micClick}><Icon icon={micButton} /></MyButton>
+                {/* <MyButton onClick={videoClick}><Icon icon={videoButton} /></MyButton> */}
+                {/* <MyButton onClick={micClick}><Icon icon={micButton} /></MyButton> */}
                 <MyButton onClick={gamesClick}><Icon size={20} icon={basic_joypad} /></MyButton>
             </NavDiv>
         </GeneralWrapper>

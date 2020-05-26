@@ -98,7 +98,6 @@ const DrawStory = () => {
             arr.push(Number(item.key));
           });
           setPlayersArray(arr);
-          console.log("arr: ", arr);
         });
     }
   }, [willPlay]);
@@ -119,41 +118,41 @@ const DrawStory = () => {
         setClear(!clear);
         setDbURL(snapshot.val())
     })
-  }, [])
+  }, [bookHolder])
 
 //----- COUNTING
-  useEffect(() => {
-    roomsRef.child(`${roomID}`).child("game").child("books").on("child_added", () => {
+    useEffect(() => {
+        if (playersArray.length < 1) return
         if (counter >= playersArray.length) {
-            setGameOver(true); //NOT WORKING
-        } else {
-            setCounter(counter +1); //NOT WORKING
+            setGameOver(true); 
         }
+    }, [counter])
+
+  useEffect(() => {
+    roomsRef.child(`${roomID}`).child("game").child("status").on("child_added", snapshot => {
+        let round = Number(snapshot.key)
+        console.log('playersArray: ', playersArray); 
+        setCounter(round +1);
         setClear(!clear);
     })
-  }, [])
+  }, [bookHolder])
 
 //----- SENDING
   useEffect(() => {
       if (input === "") return
       roomsRef.child(`${roomID}`).child("game").child("books").child(`${userID}`).set(`${input}`);
+      roomsRef.child(`${roomID}`).child("game").child("status").child(`${counter}`).set(`round`);
       setClear(!clear);
   }, [bookHolder])
 
   const sendOver = (event) => {
     event.preventDefault();
-    console.log("SEND OVER");
     if (bookHolder === 0) {
         setBookHolder(playersArray[0])
     } else {
         setBookHolder(playersArray[counter])
     }
   }
-
-  console.log("GAMEOVER", gameOver);
-  console.log("COUNTER", counter);
-  console.log('dbURL: ', dbURL);
-  console.log('bookHolder: ', bookHolder);
 
 //------------------------------------- HTML -------------------------------------
 
