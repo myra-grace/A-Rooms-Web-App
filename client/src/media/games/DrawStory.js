@@ -121,13 +121,16 @@ const DrawStory = () => {
     })
   }, [])
 
+  let numCount = 0;
 //----- COUNTING
   useEffect(() => {
     roomsRef.child(`${roomID}`).child("game").child("books").on("child_added", () => {
-        if (counter >= playersArray.length) {
-            setGameOver(true); //NOT WORKING
+        if (numCount > playersArray.length +1) {
+            setGameOver(true); //NOT WORKING 
         } else {
-            setCounter(counter +1); //NOT WORKING
+            numCount += 1;
+            // setCounter(counter +1); //NOT WORKING
+            debugger
         }
         setClear(!clear);
     })
@@ -149,10 +152,11 @@ const DrawStory = () => {
         setBookHolder(playersArray[counter])
     }
   }
-
+  console.log("**************************************");
   console.log("GAMEOVER", gameOver);
   console.log("COUNTER", counter);
-  console.log('dbURL: ', dbURL);
+  console.log('numCount: ', numCount);
+//   console.log('dbURL: ', dbURL);
   console.log('bookHolder: ', bookHolder);
 
 //------------------------------------- HTML -------------------------------------
