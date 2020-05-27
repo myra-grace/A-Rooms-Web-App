@@ -44,8 +44,6 @@ const Media = () => {
             })
             setItemsInQueueArray(valArr);
             setQueueIDs(keyArr);
-            console.log('valArr: ', valArr);
-            console.log('keyArr: ', keyArr);
             if (switchMe === false) {
                 setSwitchMe(true);
             }

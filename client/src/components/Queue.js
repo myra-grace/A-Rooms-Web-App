@@ -12,19 +12,13 @@ const Queue = () => {
     const [switchUp, setSwitchUp] = useState(false);
     const roomID = useSelector(state => state.roomReducer.roomID);
 
-
-    const handleReceiveQueue = (item) => {
-        if (itemsInQueueDiv.includes(item)) return
-        itemsInQueueDiv.push(item);
-        setItemsInQueueDiv(itemsInQueueDiv);
-    }
-
-    
     useEffect(() => {
-        roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
-            let item = {};
-            item = snapshot.val();
-            handleReceiveQueue(item);
+        roomsRef.child(`${roomID}`).child("queue").on('value', snapshot => {
+            let valArr = [];
+            snapshot.forEach((item) => {
+                valArr.push(item.val());
+            })
+            setItemsInQueueDiv(valArr);
             if (switchUp === false) {
                 setSwitchUp(true);
             }
