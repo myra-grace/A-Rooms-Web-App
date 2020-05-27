@@ -261,7 +261,7 @@ const ShareDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 5;
+    z-index: 8;
 `;
 
 export default Room;
