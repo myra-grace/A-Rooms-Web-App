@@ -61,7 +61,6 @@ const Media = () => {
 
 
     const handleRemoveMedia = () => {
-        console.log('we done here');
         let fileID = queueIDs[0];
         storageRoomsRef.child(`${roomID}`).child(`${fileID}`).delete();
         roomsRef.child(`${roomID}`).child("game").remove();

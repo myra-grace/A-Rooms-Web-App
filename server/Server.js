@@ -9,7 +9,6 @@ app.use(express.static(path.join(__dirname, 'build')));
 
 const roomHandler = (req, res) => {
     let room = req.params.roomID
-    console.log('room: ', room);
     res.send({room})
 }
 

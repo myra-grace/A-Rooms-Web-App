@@ -44,9 +44,9 @@ const GamesSelector = () => {
 
     return (
         <Wrapper>
-            <StyledButton onClick={handleTele}>
+            {/* <StyledButton onClick={handleTele}>
                 <StyledImg src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Pencil_vector.svg"/>
-            </StyledButton>
+            </StyledButton> */}
             <StyledButton onClick={handleSnake}>
                 <StyledImg src="https://www.publicdomainpictures.net/pictures/90000/velka/cobra-snake-poisonous.jpg"/>
             </StyledButton>

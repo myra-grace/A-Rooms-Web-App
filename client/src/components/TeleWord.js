@@ -23,7 +23,6 @@ const Telestrations = () => {
         const userTyped = event.target.value;
         if (wordInput.length >= maxCharacters) return //PREVENT SPACEBAR ALSO
         setWordInput(userTyped);
-        console.log('word: ', wordInput);
     }
 
 //------------------------------------- HTML -------------------------------------

@@ -37,7 +37,6 @@ const DrawStory = () => {
     const context = canvasRef.current.getContext("2d");
 
     const draw = (event) => {
-      console.log("draw");
       if (!drawing) return;
       context.lineWidth = 5;
       context.lineCap = "round";
@@ -112,13 +111,13 @@ const DrawStory = () => {
     img.src = dbURL;
   }, [dbURL]);
 
-  //----- GETTING URL & COUNTING //db counter //books arr.length as counter obj.keys
+  //----- GETTING URL 
   useEffect(() => {
     roomsRef.child(`${roomID}`).child("game").child("books").on("child_added", snapshot => {
         setClear(!clear);
         setDbURL(snapshot.val())
     })
-  }, [bookHolder])
+  }, [counter])
 
 //----- COUNTING
     useEffect(() => {
@@ -130,8 +129,7 @@ const DrawStory = () => {
 
   useEffect(() => {
     roomsRef.child(`${roomID}`).child("game").child("status").on("child_added", snapshot => {
-        let round = Number(snapshot.key)
-        console.log('playersArray: ', playersArray); 
+        let round = Number(snapshot.key) 
         setCounter(round +1);
         setClear(!clear);
     })
@@ -150,7 +148,6 @@ const DrawStory = () => {
     if (bookHolder === 0) {
       setBookHolder(playersArray[0]);
     } else {
-      console.log("INSIDEE counter: ", counter);
       setBookHolder(playersArray[counter]);
     }
   }

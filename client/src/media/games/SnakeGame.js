@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import firebase from 'firebase';
 //---------------------------------------------------------------------------
 
 const useKey = (key, cb) => {
@@ -31,6 +33,8 @@ const APPLE_START = [8, 3];
 //---------------------------------------------------------------------------
 
 const SnakeGame = () => {
+    const database = firebase.database();
+    const roomsRef = database.ref('rooms');
     const canvasRef = useRef();
     const [snake, setSnake] = useState(SNAKE_START);
     const [apple, setApple] = useState(APPLE_START);
@@ -38,6 +42,10 @@ const SnakeGame = () => {
     const [speedState, setSpeedState] = useState(null);
     const [gameOver, setGameOver] = useState(true);
     const [playing, setPlaying] = useState(false);
+    const [score, setScore] = useState(0);
+
+    const username = useSelector(state => state.userReducer.username);
+    const roomID = useSelector(state => state.roomReducer.roomID);
 
     const upHandler = () => {
         setDir([0, -1]);
@@ -88,11 +96,15 @@ const SnakeGame = () => {
     }
 
     const handleCreateApple = () => {
-        apple.map((_a, i) => Math.floor(Math.random() * (CANVAS_SIZE[i] / SCALE)));
+        let first = Math.floor(Math.random() * (CANVAS_SIZE[0]) / SCALE)
+        let second = Math.floor(Math.random() * (CANVAS_SIZE[1]) / SCALE)
+        setApple([first, second]);
+        // apple.map((_, i) => Math.floor(Math.random() * (CANVAS_SIZE[i]) / SCALE));
     }
 
     const handleCollisionSnake = (piece, myex = snake) => {
-        if (
+      if (piece !== undefined) {
+          if (
             piece[0] * SCALE >= CANVAS_SIZE[0] ||
             piece[0] < 0 ||
             piece[1] * SCALE >= CANVAS_SIZE[1] ||
@@ -107,25 +119,40 @@ const SnakeGame = () => {
             }
         }
         return false;
-    }
+      }
+    };
 
-    const handleCollisionApple = (newSnakeHead) => {
-        if(newSnakeHead[0][0] === apple[0] && newSnakeHead[0][1] === apple[1]) {
-            let newApple = handleCreateApple();
-            while (handleCollisionSnake(newApple, newSnakeHead)) {
-                newApple = handleCreateApple();
-            }
-            setApple(newApple);
+    useEffect(() => {
+        if (apple === undefined) {
+            handleCreateApple()
+        }
+    }, [apple])
+
+    useEffect(() => {
+        if (score < 3) return
+        const currentDate = Date.now();
+        if (gameOver === true) {
+            roomsRef.child(`${roomID}`).child("chat").child(`${currentDate}`).child(`${username}`).set(`🎉Scored ${score} on Snake!🎉`);
+        }
+        setScore(0);
+    }, [gameOver])
+
+    const handleCollisionApple = (newSnake) => {
+        if (apple === undefined) return
+          if(newSnake[0][0] === apple[0] && newSnake[0][1] === apple[1]) {
+            setScore(score +1)
+            setApple(undefined);
             return true;
         }
         return false;
-    }
+    };
 
     const handleGameLoop = () => {
         const snakeCopy = JSON.parse(JSON.stringify(snake));
         const newSnakeHead = [snakeCopy[0][0] + dir[0], snakeCopy[0][1] + dir[1]];
         snakeCopy.unshift(newSnakeHead);
         if (handleCollisionSnake(newSnakeHead)) handleEndGame();
+        // snakeCopy.pop();
         if (!handleCollisionApple(snakeCopy)) snakeCopy.pop();
         setSnake(snakeCopy);
     };
@@ -133,13 +160,15 @@ const SnakeGame = () => {
     useEffect(() => {
         const context = canvasRef.current.getContext('2d');
         context.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        context.clearRect(0, 0, CANVAS_SIZE[0], CANVAS_SIZE[1]);
         
         context.fillStyle = "#c4b1ab";
         snake.forEach(([x, y]) => context.fillRect(x, y, 1, 1));
 
         context.fillStyle = "#a1395b";
-        context.fillRect(apple[0], apple[1], 1, 1);
+        if (apple !== undefined) {
+            context.fillRect(apple[0], apple[1], 1, 1);
+        }
     }, [snake, apple, gameOver]);
 
     const useInterval = (callback, delay) => {
@@ -188,6 +217,7 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 6;
 `;
 
 const StyledButton = styled.button`

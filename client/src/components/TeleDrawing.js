@@ -20,7 +20,6 @@ const TeleDrawing = () => {
         const context = canvasRef.current.getContext('2d');
 
         const draw = (event) => {
-            console.log('draw');
             if (!drawing) return;
             context.lineWidth = 5;
             context.lineCap = "round";

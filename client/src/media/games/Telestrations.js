@@ -44,14 +44,12 @@ const Telestrations = (props) => {
             arr.push(Number(item.key));
           });
           setPlayersArray(arr);
-          console.log("arr: ", arr);
         });
     }
   }, [willPlay]);
 
   useEffect(() => {
     //IT'S ADDING ON TOP
-    console.log("BBBBBBBBBB bookOwner: ", bookOwner);
     debugger;
     if (willPlay === true) {
       if (bookOwner === "") return;
@@ -64,7 +62,6 @@ const Telestrations = (props) => {
           .child(`${userID}`)
           .child(`${type}`)
           .set(`${input}`);
-        console.log("type: ", type);
         setType("sketch");
       } else {
         roomsRef
@@ -128,7 +125,6 @@ const Telestrations = (props) => {
           willPlay === true &&
           gameplay === true
         ) {
-          console.log("@@@@@@@##snapshot: ", snapshot);
           // if (bookOwner === userID) {
           //     console.log('bookOwner: ', bookOwner);
           //     // setGameOver(true);
@@ -181,12 +177,12 @@ const Telestrations = (props) => {
       });
   }, [willPlay]);
 
-  console.log("OUTSIDE playersArray: ", playersArray);
-  console.log("gameOver: ", gameOver);
-  console.log("gameplay: ", gameplay);
-  console.log("userID: ", userID);
-  console.log("bookNum: ", bookNum);
-  console.log("bookOwner: ", bookOwner);
+  // console.log("OUTSIDE playersArray: ", playersArray);
+  // console.log("gameOver: ", gameOver);
+  // console.log("gameplay: ", gameplay);
+  // console.log("userID: ", userID);
+  // console.log("bookNum: ", bookNum);
+  // console.log("bookOwner: ", bookOwner);
 
   //------------------------------------- HTML -------------------------------------
 
