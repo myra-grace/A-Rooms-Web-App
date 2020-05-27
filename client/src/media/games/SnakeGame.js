@@ -217,7 +217,7 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 6;
+    z-index: 4;
 `;
 
 const StyledButton = styled.button`
