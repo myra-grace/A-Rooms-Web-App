@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import firebase from 'firebase';
-
-
 import { Icon } from 'react-icons-kit';
 import {xFeather} from 'react-icons-kit/feather/x'
 import {x} from 'react-icons-kit/oct/x'
@@ -11,7 +9,6 @@ import {androidClose} from 'react-icons-kit/ionicons/androidClose'
 import {ic_close} from 'react-icons-kit/md/ic_close'
 import {ic_cancel} from 'react-icons-kit/md/ic_cancel'
 import {cross} from 'react-icons-kit/icomoon/cross'
-//queue icon and funcionality in chat box
 
 import GameRenderer from '../components/GameRendered';
 //---------------------------------------------------------------------------
@@ -35,24 +32,20 @@ const Media = () => {
     const [title, setTitle] = useState("");
 
 
-    const handleReceiveQueue = (item) => {
-        if (itemsInQueueArray.includes(item)) return
-        itemsInQueueArray.push(item);
-        setItemsInQueueArray(itemsInQueueArray);
-    }
-    const handleReceiveIDs = (id) => {
-        if (queueIDs.includes(id)) return
-        queueIDs.push(id);
-        setQueueIDs(queueIDs);
-    }
-
-
     useEffect(() => {
-        roomsRef.child(`${roomID}`).child("queue").on('child_added', snapshot => {
-            let queuedItem = {};
-            queuedItem = snapshot.val();
-            handleReceiveQueue(queuedItem);
-            handleReceiveIDs(snapshot.key);
+        roomsRef.child(`${roomID}`).child("queue").on('value', snapshot => {
+            console.log('snapshot: ', snapshot);
+            console.log('snapshot.val(): ', snapshot.val());
+            let valArr = [];
+            let keyArr = [];
+            snapshot.forEach((item) => {
+                valArr.push(item.val());
+                keyArr.push(item.key);
+            })
+            setItemsInQueueArray(valArr);
+            setQueueIDs(keyArr);
+            console.log('valArr: ', valArr);
+            console.log('keyArr: ', keyArr);
             if (switchMe === false) {
                 setSwitchMe(true);
             }
@@ -84,21 +77,22 @@ const Media = () => {
         setMyQueuedIDs(queueArr)
     }, [sharedFiles])
 
+    
     return (
         <Wrapper ref={mediaContainerRef}>
-            {itemsInQueueArray.length > 1 && sharedFiles.includes(queueIDs[0]) ?
+            {itemsInQueueArray.length >= 1 && sharedFiles.includes(queueIDs[0]) ?
             <XButton onClick={handleRemoveMedia}>❌</XButton> : null
             }
 
-            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "game" ?
+            {itemsInQueueArray.length >= 1 && Object.keys(itemsInQueueArray[0])[0] === "game" ?
                 <GameRenderer gameTitle={Object.values(itemsInQueueArray[0])[0]} currentMedia={queueIDs[0]} sharedFiles={sharedFiles} /> : null
             }
             
-            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "image" ?
+            {itemsInQueueArray.length >= 1 && Object.keys(itemsInQueueArray[0])[0] === "image" ?
             <StyledImage src={itemsInQueueArray[0]["image"]}/> : null
             }
 
-            {itemsInQueueArray.length > 1 && Object.keys(itemsInQueueArray[0])[0] === "audio" ?
+            {itemsInQueueArray.length >= 1 && Object.keys(itemsInQueueArray[0])[0] === "audio" ?
             <figure>
                 <figcaption>{title}</figcaption>
                 <audio controls preload="auto">
