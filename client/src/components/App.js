@@ -81,7 +81,7 @@ const StyledLink = styled(Link)`
     position: absolute;
     top: 2%;
     left: 2%;
-    z-index: 3;
+    z-index: 10;
 `
 const Wrapper = styled.div`
     width: 100%;
