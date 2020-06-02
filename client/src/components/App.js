@@ -19,6 +19,7 @@ import {home} from 'react-icons-kit/feather/home'
 import firebase from 'firebase';
 import {AppContext} from './AppContext';
 import Telestrations from '../media/games/Telestrations';
+import MoonRide from '../media/games/MoonRide';
 
 
 //------------------------------------------------------------
@@ -64,6 +65,7 @@ const App = () => {
         <Route path="/sign-in" component={SignIn} />
         <Route path="/create-join" component={CreateJoin} />
         <Route path="/room/:roomID" component={Room} />
+        <Route path="/MoonRide" component={MoonRide} />
         <Route path="/*" render={() => <Wrapper><h1>Nothing here...</h1> <img style={{borderRadius: "20%"}} src="https://i.gifer.com/3lL0.gif" /> </Wrapper>} />
 
       </Switch>

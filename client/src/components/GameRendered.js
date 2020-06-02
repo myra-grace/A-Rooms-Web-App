@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import SnakeGame from '../media/games/SnakeGame';
 import Telestrations from '../media/games/Telestrations';
 import DrawStory from '../media/games/DrawStory';
+import MoonRide from '../media/games/MoonRide';
 import firebase from 'firebase';
 import { GeneralWrapper } from '../components/GlobalStyles';
 
@@ -24,6 +25,9 @@ const GameRenderer = (props) => { //props passed down is 1 step behind when fina
             }
             {game == "DrawStory" ?
             <DrawStory currentMedia={props.currentMedia} sharedFiles={props.sharedFiles}/> : null
+            }
+            {game == "MoonRide" ?
+            <MoonRide currentMedia={props.currentMedia} sharedFiles={props.sharedFiles}/> : null
             }
         </GeneralWrapper>
     )

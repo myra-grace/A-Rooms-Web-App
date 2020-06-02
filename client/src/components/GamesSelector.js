@@ -35,9 +35,17 @@ const GamesSelector = () => {
 
     const handleDrawStory = (event) => {
         event.preventDefault();
-        dispatch(gameName("Snake"))
+        dispatch(gameName("DrawStory"))
         dispatch(addToSharedFiles(fileID.toString()));
         roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`DrawStory`);
+        dispatch(gamesDivToggle(!gamesDiv));
+    }
+
+    const handleMoonRide = (event) => {
+        event.preventDefault();
+        dispatch(gameName("MoonRide"))
+        dispatch(addToSharedFiles(fileID.toString()));
+        roomsRef.child(`${roomID}`).child("queue").child(`${fileID}`).child(`${fileType}`).set(`MoonRide`);
         dispatch(gamesDivToggle(!gamesDiv));
     }
 
@@ -52,6 +60,9 @@ const GamesSelector = () => {
             </StyledButton>
             <StyledButton onClick={handleDrawStory}>
                 <StyledImg src="https://t3.ftcdn.net/jpg/03/11/05/28/240_F_311052888_AhKslmoMeMvVHlybGu0aRNqXXZHaDj6E.jpg"/>
+            </StyledButton>
+            <StyledButton onClick={handleMoonRide}>
+                <StyledImg src="https://image.freepik.com/free-vector/abstract-symbol-speed-logo-design_107988-59.jpg"/>
             </StyledButton>
         </Wrapper>
     )
