@@ -14,7 +14,7 @@ export const ENEMY_HEIGHT = 42;
 export const MAX_ENEMIES = 3;
 
 export const PLAYER_WIDTH = 75;
-export const PLAYER_HEIGHT = 54;
+export const PLAYER_HEIGHT = 55;
 
 
 export const gas = new Audio(carNoise);

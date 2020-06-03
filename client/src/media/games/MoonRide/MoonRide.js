@@ -6,10 +6,32 @@ import { GAME_WIDTH, GAME_HEIGHT, ENEMY_WIDTH, ENEMY_HEIGHT, MAX_ENEMIES, PLAYER
 import background from "./assets/ab038146527a900b954800b323717649.jpg";
 import roadGif from "./assets/8cf33581559754a9c3420f990d99a142.gif";
 import meteor from "./assets/meteor_sprite.gif";
+import car from "./assets/car_STRAIGHT.jpeg"
+import carLeft from "./assets/car_LEFT.jpeg"
+import carRight from "./assets/car_RIGHT.jpeg"
+import carReset from "./assets/car_RESET.gif"
+import carCrash from "./assets/car_crashed.gif"
+
 import Enemy from "./Enemy";
 import { gas, resetCarNoise, hitSound } from "./MRengineUtilities";
 
+const useKey = (key, cb) => {
+    const callbackRef = useRef(cb);
 
+    useEffect(() => {
+        callbackRef.current = cb;
+    });
+
+    useEffect(() => {
+        const keyHandler = (event) => {
+            if (event.code === key) {
+                callbackRef.current(event);
+            }
+        }
+        document.addEventListener("keydown", keyHandler);
+        return () => document.removeEventListener("keydown", keyHandler);
+    }, [key]);
+}
 
 const MoonRide = () => {
     const database = firebase.database();
@@ -57,17 +79,45 @@ const MoonRide = () => {
         }
         let movement = [];
         enemies.map((enemy) => {
-            if (enemy[1] >= (GAME_HEIGHT - (ENEMY_HEIGHT/2))) {
+            if (enemy[1] >= (GAME_HEIGHT - (ENEMY_HEIGHT/2))) { //AND IF HIT PLAYER
                 setScore(score + 1);
             } else {
                 let speed = enemy[2];
-            let x = enemy[0];
-            let y = Number(enemy[1]) + speed;
-            movement.push([x, y, speed]);
+                let x = enemy[0];
+                let y = Number(enemy[1]) + speed;
+                movement.push([x, y, speed]);
             }
         })
         setEnemies(movement);
     }, [gameOver, enemies])
+//---------------------------------- PLAYER ----------------------------------
+    const [player, setPlayer] = useState((GAME_WIDTH - PLAYER_WIDTH) / 2);
+    const [playerWidth, setPlayerWidth] = useState(PLAYER_WIDTH);
+    const [playerHeight, setPlayerHeight] = useState(PLAYER_HEIGHT);
+    const [playerImg, setPlayerImg] = useState(car);
+    console.log('!!!!!!!!!!!!!!player: ', player);
+
+    const playerLeft = () => {
+        if (player === 0) return
+        setPlayerImg(carLeft);
+        setPlayer(player - PLAYER_WIDTH);
+    }
+    useKey("KeyA", playerLeft);
+    useKey("ArrowLeft", playerLeft);
+
+    const playerRight = () => {
+        if (player === GAME_WIDTH - PLAYER_WIDTH) return
+        setPlayerImg(carRight);
+        setPlayer(player + PLAYER_WIDTH);
+    }
+    useKey("KeyD", playerRight);
+    useKey("ArrowRight", playerRight);
+
+    const handleStraightenCar = () => {
+        setPlayerImg(car);
+    }
+
+    document.addEventListener("keyup", handleStraightenCar);
 //---------------------------------- ENGINE ----------------------------------
 
     useEffect(() => {
@@ -82,38 +132,10 @@ const MoonRide = () => {
             gas.pause();
         }
     }, [gameOver, speedBoost, enemyBoost]);
-
-    // useEffect(() => {
-    //     if (gameOver === true) return
-    //         const points = setTimeout(() => {
-    //         setScore(score + 1);
-    //         clearMe()
-    //     }, 150); 
-
-    //     const clearMe = () => {
-    //         console.log("CLEARRR");
-    //         clearTimeout(points) //FIX?
-    //     }
-    // }, [gameOver, score])
     
 
     const gameLoop = () => {
         setGameOver(false);
-
-        // let lastFrame = ""
-        // if (lastFrame === "") lastFrame = (new Date).getTime();
-        // let timeDiff = (new Date).getTime() - lastFrame;
-        // lastFrame = (new Date).getTime();
-        
-        // enemies.forEach(enemy => {
-        //     enemy.update(timeDiff);
-        // });
-        // enemies = enemies.filter(enemy => {
-        //     return !enemy.destroyed;
-        // });
-        while (enemies.length < MAX_ENEMIES) {
-            newEnemy();
-        }
     }
 
     useEffect(() => {
@@ -161,6 +183,16 @@ const MoonRide = () => {
                         }}/>
                     )
                 })}
+
+                <img src={playerImg} style={{
+                    objectFit: 'cover', 
+                    width: `${playerWidth}px`, 
+                    height: `${playerHeight}px`,
+                    position: 'absolute',
+                    left: `${player}px`,
+                    top: `${GAME_HEIGHT - PLAYER_HEIGHT}px`,
+                    zIndex: '2'
+                }}/>
             </GameContainer>
             <StyledH1>{score} Points</StyledH1>
         </Wrapper>
