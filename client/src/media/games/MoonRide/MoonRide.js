@@ -26,25 +26,12 @@ const MoonRide = () => {
 
     const newEnemy = () => {
         let enemy = [];
-        let x = Math.floor(Math.random() * GAME_WIDTH) / ENEMY_WIDTH;
-        let y = - ENEMY_HEIGHT;
-        enemy = [x, y];
-        enemies.push(enemy);
-
         let destroyed = false;
         let speed = Math.random() / 2 + 0.25;
-
-        // return (
-        //     <img src={meteor} style={{
-        //         objectFit: 'cover', 
-        //         width: `${ENEMY_WIDTH}px`, 
-        //         height: `${ENEMY_HEIGHT}px`,
-        //         position: 'absolute',
-        //         left: `${x}px`,
-        //         top: `${y}px`,
-        //         zIndex: '2'
-        //     }}/>
-        // )
+        let x = Math.floor(Math.random() * GAME_WIDTH) / ENEMY_WIDTH;
+        let y = - ENEMY_HEIGHT;
+        enemy = [x, y, speed];
+        enemies.push(enemy);
     }
 
     const update = (timeDiff) => {
@@ -57,6 +44,24 @@ const MoonRide = () => {
         }
     }
 
+    useEffect(() => { //FIX HOW THEY STAY ON LEFT
+        if (gameOver === true) return;
+        if (enemies.length < MAX_ENEMIES) {
+            newEnemy();
+        }
+        console.log("IN!");
+        let movement = [];
+        enemies.map((enemy) => {
+            if (enemy[1] >= (GAME_HEIGHT - (ENEMY_HEIGHT/2))) return
+            console.log('movement: ', movement);
+            let speed = enemy[2];
+            console.log('speed: ', speed);
+            let x = enemy[0];
+            let y = Number(enemy[1]) + speed;
+            movement.push([x, y, speed]);
+        })
+        setEnemies(movement);
+    }, [gameOver, enemies])
 //---------------------------------- ENGINE ----------------------------------
 
     useEffect(() => {
@@ -96,8 +101,6 @@ const MoonRide = () => {
         while (enemies.length < MAX_ENEMIES) {
             newEnemy();
         }
-
-        console.log('enemies: ', enemies);
     }
 
     useEffect(() => {
@@ -140,8 +143,8 @@ const MoonRide = () => {
                             width: `${ENEMY_WIDTH}px`, 
                             height: `${ENEMY_HEIGHT}px`,
                             position: 'absolute',
-                            left: `${enemy[0]}`,
-                            top: `${enemy[1]}`,
+                            left: `${enemy[0]}px`,
+                            top: `${enemy[1]}px`,
                             zIndex: '2'
                         }}/>
                     )
@@ -174,6 +177,7 @@ const GameContainer = styled.div`
     border: 2px solid magenta;
     border-radius: 8px;
     box-shadow: 0 0 15px 4px fuchsia;
+    position: relative;
 `;
 
 const LifeHearts = styled.h2`
