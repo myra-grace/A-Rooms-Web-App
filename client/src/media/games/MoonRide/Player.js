@@ -1,4 +1,6 @@
-class Player {
+import { GAME_WIDTH, GAME_HEIGHT, ENEMY_WIDTH, ENEMY_HEIGHT, MAX_ENEMIES, PLAYER_WIDTH, PLAYER_HEIGHT } from "./MRengineUtilities";
+
+export default class Player {
     constructor(root) {
         this.x = 2 * PLAYER_WIDTH;
         
