@@ -77,12 +77,7 @@ const MoonRide = () => {
             clearInterval(points) //FIX?
         }, 100); 
     }, [gameOver, score])
-
-    useEffect(() => {
-        while (enemies.length < MAX_ENEMIES) {
-            newEnemy();
-        }
-    }, [enemies])
+    
 
     const gameLoop = () => {
         setGameOver(false);
@@ -98,9 +93,9 @@ const MoonRide = () => {
         // enemies = enemies.filter(enemy => {
         //     return !enemy.destroyed;
         // });
-        // while (enemies.length < MAX_ENEMIES) {
-        //     newEnemy();
-        // }
+        while (enemies.length < MAX_ENEMIES) {
+            newEnemy();
+        }
 
         console.log('enemies: ', enemies);
     }
