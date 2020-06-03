@@ -19,6 +19,9 @@ const MoonRide = () => {
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(true);
     const [life, setLife] = useState(["❤","❤","❤","❤","❤","❤","❤","❤","❤","❤","❤","❤"]);
+    const [speedBoost, setSpeedBoost] = useState(0.25);
+    const [enemyBoost, setEnemyBoost] = useState(MAX_ENEMIES);
+    
 
     // const player = useContext();
 //---------------------------------- ENEMY ----------------------------------
@@ -27,8 +30,11 @@ const MoonRide = () => {
     const newEnemy = () => {
         let enemy = [];
         let destroyed = false;
-        let speed = Math.random() / 2 + 0.25;
-        let x = Math.floor(Math.random() * GAME_WIDTH) / ENEMY_WIDTH;
+        // let speed = Math.random() / 2 + 0.25 + speedBoost;
+        let speed = Math.random() * (1 + speedBoost);
+        console.log('speedBoost: ', speedBoost);
+        console.log('enemyBoost: ', enemyBoost);
+        let x = Math.floor(Math.random() * GAME_WIDTH + 1 - ENEMY_WIDTH / ENEMY_WIDTH - 1);
         let y = - ENEMY_HEIGHT;
         enemy = [x, y, speed];
         enemies.push(enemy);
@@ -46,19 +52,19 @@ const MoonRide = () => {
 
     useEffect(() => { //FIX HOW THEY STAY ON LEFT
         if (gameOver === true) return;
-        if (enemies.length < MAX_ENEMIES) {
+        if (enemies.length < enemyBoost) {
             newEnemy();
         }
-        console.log("IN!");
         let movement = [];
         enemies.map((enemy) => {
-            if (enemy[1] >= (GAME_HEIGHT - (ENEMY_HEIGHT/2))) return
-            console.log('movement: ', movement);
-            let speed = enemy[2];
-            console.log('speed: ', speed);
+            if (enemy[1] >= (GAME_HEIGHT - (ENEMY_HEIGHT/2))) {
+                setScore(score + 1);
+            } else {
+                let speed = enemy[2];
             let x = enemy[0];
             let y = Number(enemy[1]) + speed;
             movement.push([x, y, speed]);
+            }
         })
         setEnemies(movement);
     }, [gameOver, enemies])
@@ -69,19 +75,26 @@ const MoonRide = () => {
         gas.play();
         gas.addEventListener('ended', () => {
             gas.play();
+            setSpeedBoost(speedBoost + 0.25);
+            setEnemyBoost(enemyBoost + 1);
         })
         } else {
             gas.pause();
         }
-    }, [gameOver]);
+    }, [gameOver, speedBoost, enemyBoost]);
 
-    useEffect(() => {
-        if (gameOver === true) return
-            const points = setInterval(() => {
-            setScore(score + 1);
-            clearInterval(points) //FIX?
-        }, 100); 
-    }, [gameOver, score])
+    // useEffect(() => {
+    //     if (gameOver === true) return
+    //         const points = setTimeout(() => {
+    //         setScore(score + 1);
+    //         clearMe()
+    //     }, 150); 
+
+    //     const clearMe = () => {
+    //         console.log("CLEARRR");
+    //         clearTimeout(points) //FIX?
+    //     }
+    // }, [gameOver, score])
     
 
     const gameLoop = () => {
@@ -136,7 +149,6 @@ const MoonRide = () => {
                 } */}
 
                 {enemies.map((enemy, key) => {
-                    console.log('enemy: ', enemy);
                     return (
                         <img key={key} src={meteor} style={{
                             objectFit: 'cover', 
