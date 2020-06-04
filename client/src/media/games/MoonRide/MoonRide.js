@@ -48,6 +48,7 @@ const MoonRide = () => {
     // const player = useContext();
 //---------------------------------- ENEMY ----------------------------------
     const [enemies, setEnemies] = useState([]);
+    const enemyRef = useRef();
 
     const newEnemy = () => {
         let enemy = [];
@@ -62,16 +63,6 @@ const MoonRide = () => {
         enemies.push(enemy);
     }
 
-    const update = (timeDiff) => {
-        this.y = this.y + timeDiff * this.speed;
-        this.domElement.style.top = `${this.y}px`;
-
-        if (this.y > GAME_HEIGHT) {
-                this.root.removeChild(this.domElement);
-                this.destroyed = true;
-        }
-    }
-
     useEffect(() => { //FIX HOW THEY STAY ON LEFT
         if (gameOver === true) return;
         if (enemies.length < enemyBoost) {
@@ -79,6 +70,22 @@ const MoonRide = () => {
         }
         let movement = [];
         enemies.map((enemy) => {
+            if (playerRef.current === undefined || playerRef.current === null) return
+            let playerSpace = playerRef.current.getBoundingClientRect();
+
+            let enemyY = enemy[1];
+            let enemyX = enemy[0];
+
+            if ((enemyY > playerSpace.top &&
+                enemyY < playerSpace.bottom &&
+                enemyX > playerSpace.left &&
+                enemyX < playerSpace.right) 
+            ) {
+                hitSound.play();
+                setScore(score - 5);
+                life.pop();
+            }
+
             if (enemy[1] >= (GAME_HEIGHT - (ENEMY_HEIGHT/2))) { //AND IF HIT PLAYER
                 setScore(score + 1);
             } else {
@@ -95,11 +102,11 @@ const MoonRide = () => {
     const [playerWidth, setPlayerWidth] = useState(PLAYER_WIDTH);
     const [playerHeight, setPlayerHeight] = useState(PLAYER_HEIGHT);
     const [playerImg, setPlayerImg] = useState(car);
-    console.log('!!!!!!!!!!!!!!player: ', player);
+    const playerRef = useRef();
 
     const playerLeft = () => {
         if (player === 0) return
-        setPlayerImg(carLeft);
+        // setPlayerImg(carLeft);
         setPlayer(player - PLAYER_WIDTH);
     }
     useKey("KeyA", playerLeft);
@@ -107,17 +114,17 @@ const MoonRide = () => {
 
     const playerRight = () => {
         if (player === GAME_WIDTH - PLAYER_WIDTH) return
-        setPlayerImg(carRight);
+        // setPlayerImg(carRight);
         setPlayer(player + PLAYER_WIDTH);
     }
     useKey("KeyD", playerRight);
     useKey("ArrowRight", playerRight);
 
-    const handleStraightenCar = () => {
-        setPlayerImg(car);
-    }
+    // const handleStraightenCar = () => {
+    //     setPlayerImg(car);
+    // }
 
-    document.addEventListener("keyup", handleStraightenCar);
+    // document.addEventListener("keyup", handleStraightenCar);
 //---------------------------------- ENGINE ----------------------------------
 
     useEffect(() => {
@@ -141,11 +148,13 @@ const MoonRide = () => {
     useEffect(() => {
         if (score === 0) return
         const currentDate = Date.now();
-        if (gameOver === true) {
+        if (life === []) {
             roomsRef.child(`${roomID}`).child("chat").child(`${currentDate}`).child(`${username}`).set(`🎉Scored ${score} on MoonRide!🎉`);
         }
         setScore(0);
-    }, [gameOver])
+        setLife(["❤","❤","❤","❤","❤","❤","❤","❤","❤","❤","❤","❤"]);
+    }, [gameOver, life])
+
 
 //---------------------------------- HTML ----------------------------------
     return (
@@ -161,18 +170,9 @@ const MoonRide = () => {
                 </CenteringDiv>
                 }
 
-                {/* {!playing && !gameOver ? null:
-                <CenteringDiv>
-                    <MenuDiv>
-                        <StyledH1>Game Over</StyledH1>
-                        <StyledButton onClick={setPlaying(true), setGameOver(false)}>Restart</StyledButton>
-                    </MenuDiv>
-                </CenteringDiv>
-                } */}
-
                 {enemies.map((enemy, key) => {
                     return (
-                        <img key={key} src={meteor} style={{
+                        <img ref={enemyRef} key={key} src={meteor} style={{
                             objectFit: 'cover', 
                             width: `${ENEMY_WIDTH}px`, 
                             height: `${ENEMY_HEIGHT}px`,
@@ -184,14 +184,14 @@ const MoonRide = () => {
                     )
                 })}
 
-                <img src={playerImg} style={{
+                <img ref={playerRef} src={playerImg} style={{
                     objectFit: 'cover', 
                     width: `${playerWidth}px`, 
                     height: `${playerHeight}px`,
                     position: 'absolute',
                     left: `${player}px`,
                     top: `${GAME_HEIGHT - PLAYER_HEIGHT}px`,
-                    zIndex: '2'
+                    zIndex: '1'
                 }}/>
             </GameContainer>
             <StyledH1>{score} Points</StyledH1>
